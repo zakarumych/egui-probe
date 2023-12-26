@@ -1,0 +1,23 @@
+
+[workspace]
+package.version = "0.0.0"
+package.edition = "2021"
+package.license = "MIT OR Apache-2.0"
+
+[package]
+name = "egui-probe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Trait and derive macro for exposing value editing in egui"
+
+[features]
+derive = ["dep:egui-probe-proc"]
+
+[dependencies]
+egui-probe-proc = { version = "=0.0", path = "proc", optional = true }
+egui = { version = "0.24" }
+
+
+[dev-dependencies]
+eframe = "0.24"
