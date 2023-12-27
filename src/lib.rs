@@ -3,10 +3,15 @@
 //! This libraty provides a trait for value editing in egui.
 //! Powerful derive macros are provided for easy implementation on structs and enums.
 
+mod array;
 mod boolean;
+mod collections;
+mod map;
 mod num;
 mod option;
+mod set;
 mod text;
+mod vec;
 mod widget;
 
 pub use egui;
@@ -45,6 +50,8 @@ pub struct Style {
     pub boolean: BooleanStyle,
     pub variants: VariantsStyle,
     pub field_indent_size: Option<f32>,
+    pub add_button_char: Option<char>,
+    pub remove_button_char: Option<char>,
 }
 
 impl Default for Style {
@@ -54,7 +61,19 @@ impl Default for Style {
             boolean: BooleanStyle::default(),
             variants: VariantsStyle::default(),
             field_indent_size: None,
+            add_button_char: None,
+            remove_button_char: None,
         }
+    }
+}
+
+impl Style {
+    fn add_button_text(&self) -> String {
+        self.add_button_char.unwrap_or('+').to_string()
+    }
+
+    fn remove_button_text(&self) -> String {
+        self.remove_button_char.unwrap_or('-').to_string()
     }
 }
 
@@ -99,7 +118,10 @@ pub use egui_probe_proc::EguiProbe;
 #[cfg(feature = "derive")]
 #[doc(hidden)]
 pub mod private {
-    use crate::{boolean::toggle_switch, num::EguiProbeRange, text::EguiProbeMultiline};
+    use crate::{
+        boolean::toggle_switch, collections::EguiProbeFrozen, num::EguiProbeRange,
+        text::EguiProbeMultiline,
+    };
 
     use super::*;
 
@@ -141,5 +163,13 @@ pub mod private {
     #[inline(always)]
     pub fn probe_toggle_switch<'a>(value: &'a mut bool) -> impl EguiProbe + 'a {
         move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui)
+    }
+
+    #[inline(always)]
+    pub fn probe_frozen<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        EguiProbeFrozen<'a, T>: EguiProbe,
+    {
+        EguiProbeFrozen { value }
     }
 }

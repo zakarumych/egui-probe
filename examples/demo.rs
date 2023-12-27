@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use egui_probe::{angle, Probe};
 use egui_probe_proc::EguiProbe;
 
@@ -82,6 +84,18 @@ struct DemoValue {
     inlined_tags: InlinedTags,
 
     option_combobox_tags: Option<ComboBoxTags>,
+
+    array: [u8; 3],
+
+    vector: Vec<bool>,
+
+    #[egui_probe(frozen)]
+    frozen_vector: Vec<bool>,
+
+    map: HashMap<String, u32>,
+
+    #[egui_probe(frozen)]
+    frozen_map: HashMap<String, u32>,
 }
 
 #[derive(Default, EguiProbe)]
@@ -117,6 +131,23 @@ impl EguiProbeDemoApp {
                 },
                 inlined_tags: InlinedTags::Empty,
                 option_combobox_tags: None,
+                array: [0, 1, 2],
+                vector: vec![false, true, false],
+                frozen_vector: vec![false, true, false],
+
+                map: {
+                    let mut map = HashMap::new();
+                    map.insert("foo".to_owned(), 1);
+                    map.insert("bar".to_owned(), 2);
+                    map
+                },
+
+                frozen_map: {
+                    let mut map = HashMap::new();
+                    map.insert("foo".to_owned(), 1);
+                    map.insert("bar".to_owned(), 2);
+                    map
+                },
             },
         }
     }

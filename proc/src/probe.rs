@@ -21,6 +21,7 @@ proc_easy::easy_token!(transparent);
 proc_easy::easy_token!(tags);
 proc_easy::easy_token!(inlined);
 proc_easy::easy_token!(combobox);
+proc_easy::easy_token!(frozen);
 
 proc_easy::easy_parse! {
     #[derive(Clone, Copy)]
@@ -120,6 +121,7 @@ proc_easy::easy_argument_group! {
         ProbeAs(ProbeAs),
         Multiline(multiline),
         ToggleSwitch(toggle_switch),
+        Frozen(frozen),
     }
 }
 
@@ -131,6 +133,7 @@ impl FieldProbeKind {
             FieldProbeKind::Range(range) => range.range.span(),
             FieldProbeKind::Multiline(multiline) => multiline.span(),
             FieldProbeKind::ToggleSwitch(toggle_switch) => toggle_switch.span(),
+            FieldProbeKind::Frozen(frozen) => frozen.span(),
         }
     }
 
@@ -147,6 +150,7 @@ impl FieldProbeKind {
             FieldProbeKind::Range(_) => format_error!("range"),
             FieldProbeKind::Multiline(_) => format_error!("multiline"),
             FieldProbeKind::ToggleSwitch(_) => format_error!("toggle_switch"),
+            FieldProbeKind::Frozen(_) => format_error!("frozen"),
         }
     }
 }
@@ -274,6 +278,11 @@ fn field_probe(
         Some(FieldProbeKind::ToggleSwitch(_)) => {
             quote::quote_spanned! {field.span() =>
                 _f(#name, &mut probe_toggle_switch(#binding))
+            }
+        }
+        Some(FieldProbeKind::Frozen(_)) => {
+            quote::quote_spanned! {field.span() =>
+                _f(#name, &mut probe_frozen(#binding))
             }
         }
     };
@@ -577,7 +586,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                     #where_clause
                     {
                         fn probe(&mut self, ui: &mut ::egui_probe::egui::Ui, style: &::egui_probe::Style) -> ::egui_probe::egui::Response {
-                            use ::egui_probe::private::{probe_with, probe_as, probe_range, probe_multiline, probe_toggle_switch};
+                            use ::egui_probe::private::*;
 
                             let #pattern = self;
 
@@ -610,7 +619,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                         }
 
                         fn iterate_inner(&mut self, _f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
-                            use ::egui_probe::private::{probe_with, probe_as, probe_range, probe_multiline, probe_toggle_switch};
+                            use ::egui_probe::private::*;
 
                             let #pattern = self;
 
@@ -684,7 +693,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                                     }
                                     ::egui_probe::VariantsStyle::ComboBox => {
                                         let selected_variant = match self { #(#variants_selected,)* };
-                                        let cbox = ::egui_probe::egui::ComboBox::from_id_source(_ui.id()).selected_text(selected_variant);
+                                        let cbox = ::egui_probe::egui::ComboBox::from_id_source(_ui.make_persistent_id("cbox")).selected_text(selected_variant);
                                         let _in_cbox = true;
                                         cbox.show_ui(_ui, |_ui| {
                                             #(

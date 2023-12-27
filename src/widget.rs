@@ -120,6 +120,7 @@ impl ProbeLayout {
     pub fn inner_label_ui(
         &mut self,
         indent: usize,
+        id_source: impl Hash,
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui),
     ) {
@@ -130,7 +131,8 @@ impl ProbeLayout {
         let min = egui::pos2(cursor.min.x, cursor.min.y);
         let rect = egui::Rect::from_min_max(min, max);
 
-        let mut label_ui = ui.child_ui(rect, *ui.layout());
+        let mut label_ui =
+            ui.child_ui_with_id_source(rect.intersect(ui.max_rect()), *ui.layout(), id_source);
         label_ui.set_clip_rect(
             ui.clip_rect()
                 .intersect(egui::Rect::everything_left_of(max.x)),
@@ -147,6 +149,23 @@ impl ProbeLayout {
 
         final_rect.max.x = final_rect.min.x + labels_width;
 
+        ui.advance_cursor_after_rect(final_rect);
+    }
+
+    pub fn inner_value_ui(
+        &mut self,
+        id_source: impl Hash,
+        ui: &mut egui::Ui,
+        add_content: impl FnOnce(&mut egui::Ui),
+    ) {
+        let mut value_ui = ui.child_ui_with_id_source(
+            ui.cursor().intersect(ui.max_rect()),
+            *ui.layout(),
+            id_source,
+        );
+
+        add_content(&mut value_ui);
+        let final_rect = value_ui.min_rect();
         ui.advance_cursor_after_rect(final_rect);
     }
 }
@@ -190,7 +209,7 @@ where
             self.id_source,
         );
 
-        let mut header = ProbeHeader::load(ui.ctx(), ui.id());
+        let mut header = ProbeHeader::load(ui.ctx(), ui.make_persistent_id("probe_header"));
 
         egui::Frame::none()
             .fill(ui.visuals().extreme_bg_color)
@@ -203,7 +222,7 @@ where
             });
 
         if header.openness > 0.0 && self.value.has_inner() {
-            let mut layout = ProbeLayout::load(ui.ctx(), ui.id());
+            let mut layout = ProbeLayout::load(ui.ctx(), ui.make_persistent_id("probe_layout"));
 
             show_table(
                 self.value,
@@ -237,18 +256,23 @@ fn show_header(
 ) -> Option<ProbeHeader> {
     let mut header = None;
 
+    let id = ui.make_persistent_id(id_source);
+
     if value.has_inner() {
-        header = Some(ProbeHeader::load(ui.ctx(), ui.id().with(id_source)));
+        header = Some(ProbeHeader::load(ui.ctx(), id));
     }
 
     ui.horizontal(|ui| {
-        layout.inner_label_ui(indent, ui, |ui| {
+        layout.inner_label_ui(indent, id.with("label"), ui, |ui| {
             if let Some(header) = &mut header {
                 header.collapse_button(ui);
             }
             ui.label(label);
         });
-        value.probe(ui, style);
+
+        layout.inner_value_ui(id.with("value"), ui, |ui| {
+            value.probe(ui, style);
+        });
     });
 
     header
