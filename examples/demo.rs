@@ -85,7 +85,7 @@ struct DemoValue {
 }
 
 #[derive(Default, EguiProbe)]
-#[egui_probe(rename_all = camelCase)]
+#[egui_probe(rename_all = Train-Case)]
 struct InnerValue {
     line: String,
 
@@ -110,11 +110,11 @@ impl EguiProbeDemoApp {
                 angle: 0.0,
                 custom: Foo,
                 renamed: 0,
+                maybe_boolean: None,
                 inner: InnerValue {
                     line: "Hello, world!".to_owned(),
                     multi_line: "Hello,\nworld!".to_owned(),
                 },
-                maybe_boolean: None,
                 inlined_tags: InlinedTags::Empty,
                 option_combobox_tags: None,
             },

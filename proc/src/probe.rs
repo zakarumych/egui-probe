@@ -123,11 +123,39 @@ proc_easy::easy_argument_group! {
     }
 }
 
+impl FieldProbeKind {
+    fn span(&self) -> proc_macro2::Span {
+        match self {
+            FieldProbeKind::With(with) => with.with.span(),
+            FieldProbeKind::ProbeAs(probe_as) => probe_as.probe_as.span(),
+            FieldProbeKind::Range(range) => range.range.span(),
+            FieldProbeKind::Multiline(multiline) => multiline.span(),
+            FieldProbeKind::ToggleSwitch(toggle_switch) => toggle_switch.span(),
+        }
+    }
+
+    fn error_when_skipped(&self) -> &'static str {
+        macro_rules! format_error {
+            ($name:literal) => {
+                concat!("Cannot use `", $name, "` attribute for skipped field")
+            };
+        }
+
+        match self {
+            FieldProbeKind::With(_) => format_error!("with"),
+            FieldProbeKind::ProbeAs(_) => format_error!("as"),
+            FieldProbeKind::Range(_) => format_error!("range"),
+            FieldProbeKind::Multiline(_) => format_error!("multiline"),
+            FieldProbeKind::ToggleSwitch(_) => format_error!("toggle_switch"),
+        }
+    }
+}
+
 proc_easy::easy_attributes! {
     @(egui_probe)
     struct FieldAttributes {
         // If `skip` is present, the field will be skipped.
-        // Warning will be generated if other attributes are present with `skip`.
+        // Error will be generated if other attributes are present together with `skip`.
         skip: Option<skip>,
         name: Option<Name>,
         kind : Option<FieldProbeKind>,
@@ -196,47 +224,15 @@ fn field_probe(
     let attributes: FieldAttributes = proc_easy::EasyAttributes::parse(&field.attrs, field.span())?;
 
     if attributes.skip.is_some() {
-        match attributes.name {
-            Some(name) => {
-                return Err(syn::Error::new_spanned(
-                    name.name,
-                    "Cannot name skipped field",
-                ))
-            }
-            None => {}
+        if let Some(name) = attributes.name {
+            return Err(syn::Error::new_spanned(
+                name.name,
+                "Cannot name skipped field",
+            ));
         }
-        match attributes.kind {
-            Some(FieldProbeKind::With(with)) => {
-                return Err(syn::Error::new_spanned(
-                    with.with,
-                    "Cannot use `with` attribute for skipped field",
-                ))
-            }
-            Some(FieldProbeKind::ProbeAs(probe_as)) => {
-                return Err(syn::Error::new_spanned(
-                    probe_as.probe_as,
-                    "Cannot use `as` attribute for skipped field",
-                ))
-            }
-            Some(FieldProbeKind::Range(range)) => {
-                return Err(syn::Error::new_spanned(
-                    range.range,
-                    "Cannot use `range` attribute for skipped field",
-                ))
-            }
-            Some(FieldProbeKind::Multiline(multiline)) => {
-                return Err(syn::Error::new_spanned(
-                    multiline,
-                    "Cannot use `multiline` attribute for skipped field",
-                ))
-            }
-            Some(FieldProbeKind::ToggleSwitch(toggle_switch)) => {
-                return Err(syn::Error::new_spanned(
-                    toggle_switch,
-                    "Cannot use `toggle_switch` attribute for skipped field",
-                ))
-            }
-            None => {}
+
+        if let Some(kind) = attributes.kind {
+            return Err(syn::Error::new(kind.span(), kind.error_when_skipped()));
         }
 
         return Ok(None);
@@ -346,11 +342,14 @@ fn variant_probe(
     };
 
     let tokens = quote::quote_spanned! {variant.ident.span() =>
-        let mut checked = match self { #pattern => true, _ => false };
+        let checked = match self { #pattern => true, _ => false };
         if _ui.selectable_label(checked, #name).clicked() {
             if !checked {
                 *self = #construct;
             }
+            // if _in_cbox {
+            //     _ui.close_menu();
+            // }
         }
     };
 
@@ -678,6 +677,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             ui.horizontal(|_ui| {
                                 match #variants_style {
                                     ::egui_probe::VariantsStyle::Inlined => {
+                                        let _in_cbox = false;
                                         #(
                                             #variants_probe
                                         )*
@@ -685,10 +685,10 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                                     ::egui_probe::VariantsStyle::ComboBox => {
                                         let selected_variant = match self { #(#variants_selected,)* };
                                         let cbox = ::egui_probe::egui::ComboBox::from_id_source(_ui.id()).selected_text(selected_variant);
-
+                                        let _in_cbox = true;
                                         cbox.show_ui(_ui, |_ui| {
                                             #(
-                                                #variants_probe
+                                                #variants_probe;
                                             )*
                                         });
                                     }

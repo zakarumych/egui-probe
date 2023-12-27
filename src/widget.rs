@@ -117,18 +117,28 @@ impl ProbeLayout {
         }
     }
 
-    pub fn inner_label_ui(&mut self, ui: &mut egui::Ui, add_content: impl FnOnce(&mut egui::Ui)) {
+    pub fn inner_label_ui(
+        &mut self,
+        indent: usize,
+        ui: &mut egui::Ui,
+        add_content: impl FnOnce(&mut egui::Ui),
+    ) {
         let labels_width = self.state.labels_width;
         let cursor = ui.cursor();
 
         let max = egui::pos2(cursor.max.x.min(cursor.min.x + labels_width), cursor.max.y);
-        let rect = egui::Rect::from_min_max(cursor.min, max);
+        let min = egui::pos2(cursor.min.x, cursor.min.y);
+        let rect = egui::Rect::from_min_max(min, max);
 
         let mut label_ui = ui.child_ui(rect, *ui.layout());
         label_ui.set_clip_rect(
             ui.clip_rect()
                 .intersect(egui::Rect::everything_left_of(max.x)),
         );
+
+        for _ in 0..indent {
+            label_ui.separator();
+        }
 
         add_content(&mut label_ui);
         let mut final_rect = label_ui.min_rect();
@@ -199,6 +209,7 @@ where
                 self.value,
                 &mut header,
                 &mut layout,
+                0,
                 ui,
                 &self.style,
                 "table",
@@ -219,6 +230,7 @@ fn show_header(
     label: &str,
     value: &mut dyn EguiProbe,
     layout: &mut ProbeLayout,
+    indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
     id_source: impl Hash,
@@ -230,7 +242,7 @@ fn show_header(
     }
 
     ui.horizontal(|ui| {
-        layout.inner_label_ui(ui, |ui| {
+        layout.inner_label_ui(indent, ui, |ui| {
             if let Some(header) = &mut header {
                 header.collapse_button(ui);
             }
@@ -246,6 +258,7 @@ fn show_table(
     value: &mut dyn EguiProbe,
     header: &mut ProbeHeader,
     layout: &mut ProbeLayout,
+    indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
     id_source: impl Hash,
@@ -269,11 +282,19 @@ fn show_table(
 
     let mut idx = 0;
     value.iterate_inner(&mut |label, value| {
-        let header = show_header(label, value, layout, &mut table_ui, style, idx);
+        let header = show_header(label, value, layout, indent + 1, &mut table_ui, style, idx);
 
         if let Some(mut header) = header {
             if header.openness > 0.0 {
-                show_table(value, &mut header, layout, &mut table_ui, style, idx);
+                show_table(
+                    value,
+                    &mut header,
+                    layout,
+                    indent + 1,
+                    &mut table_ui,
+                    style,
+                    idx,
+                );
             }
             header.store(table_ui.ctx());
         }
@@ -282,7 +303,8 @@ fn show_table(
     });
 
     let final_table_rect = table_ui.min_rect();
-    header.set_body_height(final_table_rect.height());
 
     ui.advance_cursor_after_rect(final_table_rect);
+    let table_height = ui.cursor().min.y - table_rect.min.y;
+    header.set_body_height(table_height);
 }
