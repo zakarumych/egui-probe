@@ -8,7 +8,7 @@ where
         ui.weak(format!("[{N}]"))
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         N != 0
     }
 
@@ -27,7 +27,7 @@ where
         ui.weak(format!("[{N}]"))
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         N != 0
     }
 
@@ -46,7 +46,7 @@ where
         ui.weak(format!("[{}]", self.len()))
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         !self.is_empty()
     }
 

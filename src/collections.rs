@@ -21,7 +21,7 @@ where
         .response
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         self.value.has_inner() && !self.delete
     }
 

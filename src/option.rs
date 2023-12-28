@@ -12,7 +12,7 @@ where
     }
 
     #[inline(always)]
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         match self {
             Some(value) => value.has_inner(),
             None => false,

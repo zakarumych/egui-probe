@@ -85,7 +85,7 @@ pub trait EguiProbe {
     /// Returns `true` if the value has sub-values for probbing.
     /// This will cause the value to be
     #[inline(always)]
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         false
     }
 

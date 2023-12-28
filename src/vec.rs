@@ -18,7 +18,7 @@ where
         .response
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         !self.is_empty()
     }
 
@@ -44,7 +44,7 @@ where
         ui.weak(format!("[{}]", self.value.len()))
     }
 
-    fn has_inner(&self) -> bool {
+    fn has_inner(&mut self) -> bool {
         !self.value.is_empty()
     }
 

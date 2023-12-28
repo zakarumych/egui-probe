@@ -220,11 +220,7 @@ fn make_name(
     }
 }
 
-fn field_probe(
-    idx: usize,
-    field: &syn::Field,
-    rename_case: Option<RenameCase>,
-) -> syn::Result<Option<proc_macro2::TokenStream>> {
+fn field_name(field: &syn::Field, rename_case: Option<RenameCase>) -> syn::Result<Option<LitStr>> {
     let attributes: FieldAttributes = proc_easy::EasyAttributes::parse(&field.attrs, field.span())?;
 
     if attributes.skip.is_some() {
@@ -244,45 +240,66 @@ fn field_probe(
 
     let name = make_name(attributes.name, field.ident.as_ref(), rename_case);
 
+    Ok(Some(name))
+}
+
+fn field_probe(idx: usize, field: &syn::Field) -> syn::Result<Option<proc_macro2::TokenStream>> {
+    let attributes: FieldAttributes = proc_easy::EasyAttributes::parse(&field.attrs, field.span())?;
+
+    if attributes.skip.is_some() {
+        if let Some(name) = attributes.name {
+            return Err(syn::Error::new_spanned(
+                name.name,
+                "Cannot name skipped field",
+            ));
+        }
+
+        if let Some(kind) = attributes.kind {
+            return Err(syn::Error::new(kind.span(), kind.error_when_skipped()));
+        }
+
+        return Ok(None);
+    }
+
     let binding = quote::format_ident!("___{}", idx);
 
     let tokens = match attributes.kind {
         None => {
             quote::quote_spanned! {field.span() =>
-                _f(#name, #binding)
+                #binding
             }
         }
         Some(FieldProbeKind::With(with)) => {
             let expr = with.expr;
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_with(#expr, #binding))
+                &mut probe_with(#expr, #binding)
             }
         }
         Some(FieldProbeKind::ProbeAs(probe_as)) => {
             let expr = probe_as.expr;
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_as(#expr, #binding))
+                &mut probe_as(#expr, #binding)
             }
         }
         Some(FieldProbeKind::Range(range)) => {
             let expr = range.expr;
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_range(#expr, #binding))
+                &mut probe_range(#expr, #binding)
             }
         }
         Some(FieldProbeKind::Multiline(_)) => {
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_multiline(#binding))
+                &mut probe_multiline(#binding)
             }
         }
         Some(FieldProbeKind::ToggleSwitch(_)) => {
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_toggle_switch(#binding))
+                &mut probe_toggle_switch(#binding)
             }
         }
         Some(FieldProbeKind::Frozen(_)) => {
             quote::quote_spanned! {field.span() =>
-                _f(#name, &mut probe_frozen(#binding))
+                &mut probe_frozen(#binding)
             }
         }
     };
@@ -365,10 +382,7 @@ fn variant_probe(
     Ok(tokens)
 }
 
-fn variant_inline_probe(
-    variant: &syn::Variant,
-    rename_case: Option<RenameCase>,
-) -> syn::Result<proc_macro2::TokenStream> {
+fn variant_inline_probe(variant: &syn::Variant) -> syn::Result<proc_macro2::TokenStream> {
     let attributes: VariantAttributes =
         proc_easy::EasyAttributes::parse(&variant.attrs, variant.span())?;
 
@@ -399,7 +413,7 @@ fn variant_inline_probe(
             .fields
             .iter()
             .enumerate()
-            .filter_map(|(idx, field)| field_probe(idx, field, rename_case).transpose())
+            .filter_map(|(idx, field)| field_probe(idx, field).transpose())
             .collect::<syn::Result<_>>()?;
 
         if fields_probe.len() != 1 {
@@ -413,12 +427,8 @@ fn variant_inline_probe(
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => {
-                let mut _f = move |_label, field| {
-                    ::egui_probe::EguiProbe::probe(field, _ui, _style)
-                };
-
-                #field_probe;
-            },
+                ::egui_probe::EguiProbe::probe(#field_probe, _ui, _style);
+            }
         };
 
         Ok(tokens)
@@ -445,38 +455,7 @@ fn variant_has_inner(variant: &syn::Variant) -> syn::Result<proc_macro2::TokenSt
         syn::Fields::Named(_) => quote::quote! {Self::#ident {..}},
     };
 
-    let has_inner = attributes.transparent.is_none()
-        && match variant.fields {
-            syn::Fields::Unit => false,
-            syn::Fields::Unnamed(ref fields) => !fields.unnamed.is_empty(),
-            syn::Fields::Named(ref fields) => !fields.named.is_empty(),
-        };
-
-    let tokens = quote::quote_spanned! {variant.ident.span() =>
-        #pattern => #has_inner,
-    };
-
-    Ok(tokens)
-}
-
-fn variant_iterate_inner(
-    variant: &syn::Variant,
-    rename_case: Option<RenameCase>,
-) -> syn::Result<proc_macro2::TokenStream> {
-    let attributes: VariantAttributes =
-        proc_easy::EasyAttributes::parse(&variant.attrs, variant.span())?;
-
-    let ident = &variant.ident;
-
     if attributes.transparent.is_some() {
-        let pattern = match variant.fields {
-            syn::Fields::Unit => quote::quote!(Self::#ident),
-            syn::Fields::Unnamed(_) => quote::quote! {Self::#ident (..)},
-            syn::Fields::Named(_) => quote::quote! {Self::#ident {..}},
-        };
-
-        Ok(quote::quote! { #pattern => {} })
-    } else {
         let pattern = match variant.fields {
             syn::Fields::Unit => quote::quote!(Self::#ident),
             syn::Fields::Unnamed(ref fields) => {
@@ -501,12 +480,108 @@ fn variant_iterate_inner(
             .fields
             .iter()
             .enumerate()
-            .filter_map(|(idx, field)| field_probe(idx, field, rename_case).transpose())
+            .filter_map(|(idx, field)| field_probe(idx, field).transpose())
             .collect::<syn::Result<_>>()?;
+
+        if fields_probe.len() != 1 {
+            return Err(syn::Error::new_spanned(
+                attributes.transparent.unwrap(),
+                "Transparent variant must have exactly one non-skipped field",
+            ));
+        }
+
+        let field_probe = &fields_probe[0];
+
+        let tokens = quote::quote_spanned! {variant.ident.span() =>
+            #pattern => ::egui_probe::EguiProbe::has_inner(#field_probe),
+        };
+
+        Ok(tokens)
+    } else {
+        let has_inner = match variant.fields {
+            syn::Fields::Unit => false,
+            syn::Fields::Unnamed(ref fields) => !fields.unnamed.is_empty(),
+            syn::Fields::Named(ref fields) => !fields.named.is_empty(),
+        };
+
+        let tokens = quote::quote_spanned! {variant.ident.span() =>
+            #pattern => #has_inner,
+        };
+
+        Ok(tokens)
+    }
+}
+
+fn variant_iterate_inner(
+    variant: &syn::Variant,
+    rename_case: Option<RenameCase>,
+) -> syn::Result<proc_macro2::TokenStream> {
+    let attributes: VariantAttributes =
+        proc_easy::EasyAttributes::parse(&variant.attrs, variant.span())?;
+
+    let ident = &variant.ident;
+
+    let pattern = match variant.fields {
+        syn::Fields::Unit => quote::quote!(Self::#ident),
+        syn::Fields::Unnamed(ref fields) => {
+            let fields = fields
+                .unnamed
+                .iter()
+                .enumerate()
+                .map(|(idx, _)| quote::format_ident!("___{}", idx));
+            quote::quote! {Self::#ident ( #(#fields,)* )}
+        }
+        syn::Fields::Named(ref fields) => {
+            let fields = fields.named.iter().enumerate().map(|(idx, field)| {
+                let binding = quote::format_ident!("___{}", idx);
+                let ident = field.ident.as_ref().unwrap();
+                quote::quote!(#ident: #binding)
+            });
+            quote::quote! {Self::#ident { #(#fields,)* }}
+        }
+    };
+
+    if attributes.transparent.is_some() {
+        let fields_probe: Vec<_> = variant
+            .fields
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, field)| field_probe(idx, field).transpose())
+            .collect::<syn::Result<_>>()?;
+
+        if fields_probe.len() != 1 {
+            return Err(syn::Error::new_spanned(
+                attributes.transparent.unwrap(),
+                "Transparent variant must have exactly one non-skipped field",
+            ));
+        }
+
+        let field_probe = &fields_probe[0];
+
+        let tokens = quote::quote_spanned! {variant.ident.span() =>
+            #pattern => ::egui_probe::EguiProbe::iterate_inner(#field_probe, _f),
+        };
+
+        Ok(tokens)
+    } else {
+        let fields_name: Vec<_> = variant
+            .fields
+            .iter()
+            .filter_map(|field| field_name(field, rename_case).transpose())
+            .collect::<syn::Result<_>>()?;
+
+        let fields_probe: Vec<_> = variant
+            .fields
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, field)| field_probe(idx, field).transpose())
+            .collect::<syn::Result<_>>()?;
+
+        assert_eq!(fields_name.len(), fields_probe.len());
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => {
-                #(#fields_probe)*
+                #(_f(#fields_name, #fields_probe))*
             },
         };
 
@@ -568,7 +643,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                 .fields
                 .iter()
                 .enumerate()
-                .filter_map(|(idx, field)| field_probe(idx, field, rename_case).transpose())
+                .filter_map(|(idx, field)| field_probe(idx, field).transpose())
                 .collect::<syn::Result<_>>()?;
 
             if attributes.transparent.is_some() {
@@ -590,22 +665,34 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
 
                             let #pattern = self;
 
-                            let mut _f = move |_label, field| {
-                                ::egui_probe::EguiProbe::probe(field, ui, style)
-                            };
-
-                            #field_probe
+                            ::egui_probe::EguiProbe::probe(#field_probe, ui, style)
                         }
 
-                        fn has_inner(&self) -> bool {
-                            false
+                        fn has_inner(&mut self) -> bool {
+                            use ::egui_probe::private::*;
+
+                            let #pattern = self;
+
+                            ::egui_probe::EguiProbe::has_inner(#field_probe)
                         }
 
-                        fn iterate_inner(&mut self, _f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {}
+                        fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
+                            use ::egui_probe::private::*;
+
+                            let #pattern = self;
+
+                            ::egui_probe::EguiProbe::iterate_inner(#field_probe, f)
+                        }
                     }
                 };
                 Ok(tokens)
             } else {
+                let fields_name: Vec<_> = data
+                    .fields
+                    .iter()
+                    .filter_map(|field| field_name(field, rename_case).transpose())
+                    .collect::<syn::Result<_>>()?;
+
                 let tokens = quote::quote! {
                     impl #impl_generics ::egui_probe::EguiProbe for #ident #ty_generics
                     #where_clause
@@ -614,7 +701,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             ui.weak(::egui_probe::private::stringify!(#ident))
                         }
 
-                        fn has_inner(&self) -> bool {
+                        fn has_inner(&mut self) -> bool {
                             true
                         }
 
@@ -624,7 +711,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             let #pattern = self;
 
                             #(
-                                #fields_probe;
+                                _f(#fields_name, #fields_probe);
                             )*
                         }
                     }
@@ -649,7 +736,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
             let variants_inline_probe = data
                 .variants
                 .iter()
-                .map(|variant| variant_inline_probe(variant, rename_case))
+                .map(|variant| variant_inline_probe(variant))
                 .collect::<syn::Result<Vec<_>>>()?;
 
             let variants_has_inner = data
@@ -681,7 +768,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                     #where_clause
                     {
                         fn probe(&mut self, ui: &mut ::egui_probe::egui::Ui, _style: &::egui_probe::Style) -> ::egui_probe::egui::Response {
-                            use ::egui_probe::private::{probe_with, probe_as, probe_range, probe_multiline, probe_toggle_switch};
+                            use ::egui_probe::private::*;
 
                             ui.horizontal(|_ui| {
                                 match #variants_style {
@@ -709,14 +796,16 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             }).response
                         }
 
-                        fn has_inner(&self) -> bool {
+                        fn has_inner(&mut self) -> bool {
+                            use ::egui_probe::private::*;
+
                             match self {#(
                                 #variants_has_inner
                             )*}
                         }
 
                         fn iterate_inner(&mut self, _f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
-                            use ::egui_probe::private::{probe_with, probe_as, probe_range, probe_multiline, probe_toggle_switch};
+                            use ::egui_probe::private::*;
 
                             match self {#(
                                 #variants_iterate_inner
