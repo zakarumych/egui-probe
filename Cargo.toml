@@ -18,6 +18,6 @@ derive = ["dep:egui-probe-proc"]
 egui-probe-proc = { version = "=0.0", path = "proc", optional = true }
 egui = { version = "0.24" }
 
-
 [dev-dependencies]
 eframe = "0.24"
+edict = { git = "https://github.com/zakarumych/edict.git", branch = "flow" }

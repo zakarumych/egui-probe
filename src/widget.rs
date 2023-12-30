@@ -203,45 +203,54 @@ where
             return self.value.probe(ui, &self.style);
         }
 
-        let ref mut ui = ui.child_ui_with_id_source(
-            ui.max_rect(),
-            egui::Layout::top_down(egui::Align::Min),
-            self.id_source,
-        );
-
-        let mut header = ProbeHeader::load(ui.ctx(), ui.make_persistent_id("probe_header"));
-
-        egui::Frame::none()
-            .fill(ui.visuals().extreme_bg_color)
-            .inner_margin(ui.spacing().item_spacing * 0.5)
-            .show(ui, |ui| {
-                ui.horizontal(|ui| {
-                    header.collapse_button(ui);
-                    ui.label(self.label);
-                });
-            });
-
-        if header.openness > 0.0 && self.value.has_inner() {
-            let mut layout = ProbeLayout::load(ui.ctx(), ui.make_persistent_id("probe_layout"));
-
-            show_table(
-                self.value,
-                &mut header,
-                &mut layout,
-                0,
-                ui,
-                &self.style,
-                "table",
+        ui.allocate_ui(ui.available_size(), |ui| {
+            let ref mut child_ui = ui.child_ui_with_id_source(
+                ui.max_rect(),
+                egui::Layout::top_down(egui::Align::Min),
+                self.id_source,
             );
 
-            layout.store(ui.ctx());
-        }
+            let mut header =
+                ProbeHeader::load(child_ui.ctx(), child_ui.make_persistent_id("probe_header"));
 
-        header.store(ui.ctx());
+            egui::Frame::none()
+                .fill(child_ui.visuals().extreme_bg_color)
+                .inner_margin(child_ui.spacing().item_spacing * 0.5)
+                .show(child_ui, |child_ui| {
+                    child_ui.horizontal(|child_ui| {
+                        header.collapse_button(child_ui);
+                        child_ui.label(self.label);
+                    });
+                });
 
-        let response = ui.interact(ui.min_rect(), ui.id(), egui::Sense::hover());
-        response.widget_info(|| egui::WidgetInfo::new(egui::WidgetType::Other));
-        response
+            if header.openness > 0.0 && self.value.has_inner() {
+                let mut layout =
+                    ProbeLayout::load(child_ui.ctx(), child_ui.make_persistent_id("probe_layout"));
+
+                show_table(
+                    self.value,
+                    &mut header,
+                    &mut layout,
+                    0,
+                    child_ui,
+                    &self.style,
+                    "table",
+                );
+
+                layout.store(child_ui.ctx());
+            }
+
+            header.store(child_ui.ctx());
+
+            let final_rect = child_ui.min_rect();
+            ui.advance_cursor_after_rect(final_rect);
+
+            // let response = ui.interact(final_rect, child_ui.id(), egui::Sense::hover());
+            // response.widget_info(|| egui::WidgetInfo::new(egui::WidgetType::Other));
+
+            // response
+        })
+        .response
     }
 }
 
