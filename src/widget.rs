@@ -21,7 +21,7 @@ impl ProbeHeader {
             *d.get_temp_mut_or(
                 id,
                 ProbeHeaderState {
-                    open: true,
+                    open: false,
                     body_height: 0.0,
                 },
             )

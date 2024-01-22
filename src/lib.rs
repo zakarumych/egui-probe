@@ -3,14 +3,17 @@
 //! This libraty provides a trait for value editing in egui.
 //! Powerful derive macros are provided for easy implementation on structs and enums.
 
+mod algebra;
 mod array;
 mod boolean;
 mod collections;
+mod color;
 mod map;
 mod num;
 mod option;
 mod set;
 mod text;
+mod ui;
 mod vec;
 mod widget;
 
@@ -119,7 +122,12 @@ pub use egui_probe_proc::EguiProbe;
 #[doc(hidden)]
 pub mod private {
     use crate::{
-        boolean::toggle_switch, collections::EguiProbeFrozen, num::EguiProbeRange,
+        boolean::toggle_switch,
+        collections::EguiProbeFrozen,
+        color::{
+            EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
+        },
+        num::EguiProbeRange,
         text::EguiProbeMultiline,
     };
 
@@ -171,5 +179,37 @@ pub mod private {
         EguiProbeFrozen<'a, T>: EguiProbe,
     {
         EguiProbeFrozen { value }
+    }
+
+    #[inline(always)]
+    pub fn probe_rgb<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        EguiProbeRgb<'a, T>: EguiProbe,
+    {
+        EguiProbeRgb { value }
+    }
+
+    #[inline(always)]
+    pub fn probe_rgba<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        EguiProbeRgba<'a, T>: EguiProbe,
+    {
+        EguiProbeRgba { value }
+    }
+
+    #[inline(always)]
+    pub fn probe_rgba_premultiplied<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        EguiProbeRgbaPremultiplied<'a, T>: EguiProbe,
+    {
+        EguiProbeRgbaPremultiplied { value }
+    }
+
+    #[inline(always)]
+    pub fn probe_rgba_unmultiplied<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        EguiProbeRgbaUnmultiplied<'a, T>: EguiProbe,
+    {
+        EguiProbeRgbaUnmultiplied { value }
     }
 }

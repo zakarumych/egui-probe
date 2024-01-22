@@ -6,6 +6,7 @@ use std::{
 
 use crate::{
     collections::{DeleteMe, EguiProbeFrozen},
+    option::option_probe_with,
     EguiProbe, Style,
 };
 
@@ -155,6 +156,34 @@ where
     fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
         for (key, value) in self.value.iter_mut() {
             f(&key.to_string(), value);
+        }
+    }
+}
+
+impl<K, V, S> EguiProbe for EguiProbeFrozen<'_, Option<HashMap<K, V, S>>>
+where
+    K: Display + Eq + std::hash::Hash,
+    V: EguiProbe,
+    S: std::hash::BuildHasher + Default,
+{
+    fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
+        option_probe_with(self.value, ui, style, |value, ui, _style| {
+            ui.weak(format!("[{}]", value.len()));
+        })
+    }
+
+    fn has_inner(&mut self) -> bool {
+        match self.value {
+            Some(value) => !value.is_empty(),
+            None => false,
+        }
+    }
+
+    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+        if let Some(map) = self.value {
+            for (key, value) in map.iter_mut() {
+                f(&key.to_string(), value);
+            }
         }
     }
 }

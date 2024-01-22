@@ -1,4 +1,4 @@
-use crate::EguiProbe;
+use crate::{EguiProbe, Style};
 
 /// Modifier to add a delete button to an item probe UI.
 pub struct DeleteMe<'a, T> {
@@ -10,7 +10,7 @@ impl<T> EguiProbe for DeleteMe<'_, T>
 where
     T: EguiProbe,
 {
-    fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
+    fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
         ui.horizontal(|ui| {
             self.value.probe(ui, style);
             ui.add_space(ui.spacing().item_spacing.x);

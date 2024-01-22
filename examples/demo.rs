@@ -155,8 +155,6 @@ impl EguiProbeDemoApp {
 
 impl eframe::App for EguiProbeDemoApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        ctx.style_mut(|style| style.animation_time = 5.0);
-
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
             egui::widgets::global_dark_light_mode_switch(ui);
         });

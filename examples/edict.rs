@@ -76,8 +76,6 @@ impl eframe::App for EguiProbeEdictApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         let Self { world, selected } = self;
 
-        ctx.style_mut(|style| style.animation_time = 5.0);
-
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
             egui::widgets::global_dark_light_mode_switch(ui);
         });
@@ -150,11 +148,11 @@ impl eframe::App for EguiProbeEdictApp {
                     let e = world.entity(e).unwrap();
                     ui.vertical(|ui| {
                         let mut view = e.view_one::<QueryBorrowAll<&mut (dyn Inspect + Send)>>();
-                        let components = view.get_mut().unwrap_or_default();
-
-                        for c in components {
-                            ui.separator();
-                            c.inspect(ui);
+                        if let Some(components) = view.get_mut() {
+                            for c in components {
+                                ui.separator();
+                                c.inspect(ui);
+                            }
                         }
                     });
                 }

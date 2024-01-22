@@ -22,6 +22,10 @@ proc_easy::easy_token!(tags);
 proc_easy::easy_token!(inlined);
 proc_easy::easy_token!(combobox);
 proc_easy::easy_token!(frozen);
+proc_easy::easy_token!(rgb);
+proc_easy::easy_token!(rgba);
+proc_easy::easy_token!(rgba_premultiplied);
+proc_easy::easy_token!(rgba_unmultiplied);
 
 proc_easy::easy_parse! {
     #[derive(Clone, Copy)]
@@ -122,6 +126,10 @@ proc_easy::easy_argument_group! {
         Multiline(multiline),
         ToggleSwitch(toggle_switch),
         Frozen(frozen),
+        Rgb(rgb),
+        Rgba(rgba),
+        RgbaPremultiplied(rgba_premultiplied),
+        RgbaUnmultiplied(rgba_unmultiplied),
     }
 }
 
@@ -134,6 +142,10 @@ impl FieldProbeKind {
             FieldProbeKind::Multiline(multiline) => multiline.span(),
             FieldProbeKind::ToggleSwitch(toggle_switch) => toggle_switch.span(),
             FieldProbeKind::Frozen(frozen) => frozen.span(),
+            FieldProbeKind::Rgb(rgb) => rgb.span(),
+            FieldProbeKind::Rgba(rgba) => rgba.span(),
+            FieldProbeKind::RgbaPremultiplied(rgba_premultiplied) => rgba_premultiplied.span(),
+            FieldProbeKind::RgbaUnmultiplied(rgba_unmultiplied) => rgba_unmultiplied.span(),
         }
     }
 
@@ -151,6 +163,10 @@ impl FieldProbeKind {
             FieldProbeKind::Multiline(_) => format_error!("multiline"),
             FieldProbeKind::ToggleSwitch(_) => format_error!("toggle_switch"),
             FieldProbeKind::Frozen(_) => format_error!("frozen"),
+            FieldProbeKind::Rgb(_) => format_error!("rgb"),
+            FieldProbeKind::Rgba(_) => format_error!("rgba"),
+            FieldProbeKind::RgbaPremultiplied(_) => format_error!("rgba_premultiplied"),
+            FieldProbeKind::RgbaUnmultiplied(_) => format_error!("rgba_unmultiplied"),
         }
     }
 }
@@ -300,6 +316,26 @@ fn field_probe(idx: usize, field: &syn::Field) -> syn::Result<Option<proc_macro2
         Some(FieldProbeKind::Frozen(_)) => {
             quote::quote_spanned! {field.span() =>
                 &mut probe_frozen(#binding)
+            }
+        }
+        Some(FieldProbeKind::Rgb(_)) => {
+            quote::quote_spanned! {field.span() =>
+                &mut probe_rgb(#binding)
+            }
+        }
+        Some(FieldProbeKind::Rgba(_)) => {
+            quote::quote_spanned! {field.span() =>
+                &mut probe_rgba(#binding)
+            }
+        }
+        Some(FieldProbeKind::RgbaPremultiplied(_)) => {
+            quote::quote_spanned! {field.span() =>
+                &mut probe_rgba_premultiplied(#binding)
+            }
+        }
+        Some(FieldProbeKind::RgbaUnmultiplied(_)) => {
+            quote::quote_spanned! {field.span() =>
+                &mut probe_rgba_unmultiplied(#binding)
             }
         }
     };

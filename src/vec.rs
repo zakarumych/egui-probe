@@ -1,5 +1,6 @@
 use crate::{
     collections::{DeleteMe, EguiProbeFrozen},
+    option::option_probe_with,
     EguiProbe,
 };
 
@@ -51,6 +52,32 @@ where
     fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
         for (i, value) in self.value.iter_mut().enumerate() {
             f(&format!("[{i}]"), value);
+        }
+    }
+}
+
+impl<T> EguiProbe for EguiProbeFrozen<'_, Option<Vec<T>>>
+where
+    T: EguiProbe,
+{
+    fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
+        option_probe_with(self.value, ui, style, |value, ui, _style| {
+            ui.weak(format!("[{}]", value.len()));
+        })
+    }
+
+    fn has_inner(&mut self) -> bool {
+        match self.value {
+            Some(value) => !value.is_empty(),
+            None => false,
+        }
+    }
+
+    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+        if let Some(vec) = self.value {
+            for (i, value) in vec.iter_mut().enumerate() {
+                f(&format!("[{i}]"), value);
+            }
         }
     }
 }
