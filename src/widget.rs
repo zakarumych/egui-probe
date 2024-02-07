@@ -122,8 +122,8 @@ impl ProbeLayout {
         indent: usize,
         id_source: impl Hash,
         ui: &mut egui::Ui,
-        add_content: impl FnOnce(&mut egui::Ui),
-    ) {
+        add_content: impl FnOnce(&mut egui::Ui) -> egui::Response,
+    ) -> egui::Response {
         let labels_width = self.state.labels_width;
         let cursor = ui.cursor();
 
@@ -142,7 +142,7 @@ impl ProbeLayout {
             label_ui.separator();
         }
 
-        add_content(&mut label_ui);
+        let label_response = add_content(&mut label_ui);
         let mut final_rect = label_ui.min_rect();
 
         self.bump_labels_width(final_rect.width());
@@ -150,6 +150,7 @@ impl ProbeLayout {
         final_rect.max.x = final_rect.min.x + labels_width;
 
         ui.advance_cursor_after_rect(final_rect);
+        label_response
     }
 
     pub fn inner_value_ui(
@@ -272,15 +273,15 @@ fn show_header(
     }
 
     ui.horizontal(|ui| {
-        layout.inner_label_ui(indent, id.with("label"), ui, |ui| {
+        let label_response = layout.inner_label_ui(indent, id.with("label"), ui, |ui| {
             if let Some(header) = &mut header {
                 header.collapse_button(ui);
             }
-            ui.label(label);
+            ui.label(label)
         });
 
         layout.inner_value_ui(id.with("value"), ui, |ui| {
-            value.probe(ui, style);
+            value.probe(ui, style).labelled_by(label_response.id);
         });
     });
 

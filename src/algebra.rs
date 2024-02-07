@@ -25,14 +25,14 @@ impl EguiProbe for Pos2 {
 impl EguiProbe for Rect {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
         ui.horizontal(|ui| {
-            ui.label("top");
-            self.min.y.probe(ui, style);
-            ui.label("left");
-            self.min.x.probe(ui, style);
-            ui.label("bottom");
-            self.max.y.probe(ui, style);
-            ui.label("right");
-            self.max.x.probe(ui, style);
+            let top = ui.label("top");
+            self.min.y.probe(ui, style).labelled_by(top.id);
+            let left = ui.label("left");
+            self.min.x.probe(ui, style).labelled_by(left.id);
+            let bottom = ui.label("bottom");
+            self.max.y.probe(ui, style).labelled_by(bottom.id);
+            let right = ui.label("right");
+            self.max.x.probe(ui, style).labelled_by(right.id);
         })
         .response
     }
