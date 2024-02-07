@@ -1,6 +1,6 @@
 
 [workspace]
-package.version = "0.1.0"
+package.version = "0.2.0"
 package.edition = "2021"
 package.license = "MIT OR Apache-2.0"
 
@@ -15,9 +15,9 @@ description = "Trait and derive macro for exposing value editing in egui"
 derive = ["dep:egui-probe-proc"]
 
 [dependencies]
-egui-probe-proc = { version = "=0.1.0", path = "proc", optional = true }
-egui = { version = "0.25" }
+egui-probe-proc = { path = "proc", optional = true }
+egui = { version = "0.26" }
 
 [dev-dependencies]
-eframe = "0.25"
+eframe = "0.26"
 edict = { git = "https://github.com/zakarumych/edict.git", branch = "flow" }
