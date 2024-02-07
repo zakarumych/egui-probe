@@ -15,7 +15,7 @@ description = "Trait and derive macro for exposing value editing in egui"
 derive = ["dep:egui-probe-proc"]
 
 [dependencies]
-egui-probe-proc = { path = "proc", optional = true }
+egui-probe-proc = { path = "proc", version = "0.2.0", optional = true }
 egui = { version = "0.26" }
 
 [dev-dependencies]
