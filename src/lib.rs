@@ -71,11 +71,11 @@ impl Default for Style {
 }
 
 impl Style {
-    fn add_button_text(&self) -> String {
+    pub fn add_button_text(&self) -> String {
         self.add_button_char.unwrap_or('+').to_string()
     }
 
-    fn remove_button_text(&self) -> String {
+    pub fn remove_button_text(&self) -> String {
         self.remove_button_char.unwrap_or('-').to_string()
     }
 }
