@@ -105,6 +105,15 @@ struct InnerValue {
 
     #[egui_probe(multiline)]
     multi_line: String,
+
+    #[cfg(feature = "smallvec1")]
+    small_vec_1: smallvec1::SmallVec<[String;4]>,
+
+    #[cfg(feature = "smallvec2")]
+    small_vec_2: smallvec2::SmallVec<f32,4>,
+
+    #[cfg(feature = "hashbrown")]
+    hash_brown: hashbrown::HashMap<u8, f32>,
 }
 
 struct EguiProbeDemoApp {
@@ -128,6 +137,12 @@ impl EguiProbeDemoApp {
                 inner: InnerValue {
                     line: "Hello, world!".to_owned(),
                     multi_line: "Hello,\nworld!".to_owned(),
+                    #[cfg(feature = "smallvec1")]
+                    small_vec_1: smallvec1::smallvec!["First 4 values is on stack".to_owned()],
+                    #[cfg(feature = "smallvec2")]
+                    small_vec_2: smallvec2::smallvec![42.],
+                    #[cfg(feature = "hashbrown")]
+                    hash_brown: Default::default(),
                 },
                 inlined_tags: InlinedTags::Empty,
                 option_combobox_tags: None,
@@ -160,7 +175,9 @@ impl eframe::App for EguiProbeDemoApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            Probe::new("Value", &mut self.value).show(ui);
+            egui::ScrollArea::vertical().show(ui, |ui|{
+                Probe::new("Value", &mut self.value).show(ui);
+            });
         });
     }
 }

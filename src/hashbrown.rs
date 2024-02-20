@@ -1,87 +1,16 @@
 use std::{
-    collections::{hash_map::Entry, HashMap},
     fmt::Display,
     str::FromStr,
 };
+use hashbrown::hash_map::Entry;
+use hashbrown::HashMap;
 
 use crate::{
     collections::{DeleteMe, EguiProbeFrozen},
     option::option_probe_with,
     EguiProbe, Style,
 };
-
-#[derive(Clone)]
-pub struct HashMapProbeState {
-    pub new_key: String,
-    error: bool,
-}
-
-pub struct HashMapProbe {
-    pub state: HashMapProbeState,
-    dirty: bool,
-    id: egui::Id,
-}
-
-impl HashMapProbe {
-    pub fn load(cx: &egui::Context, id: egui::Id) -> HashMapProbe {
-        let state = cx.data_mut(|d| {
-            d.get_temp_mut_or(
-                id,
-                HashMapProbeState {
-                    new_key: String::new(),
-                    error: false,
-                },
-            )
-            .clone()
-        });
-
-        HashMapProbe {
-            state,
-            dirty: false,
-            id,
-        }
-    }
-
-    pub fn store(self, cx: &egui::Context) {
-        if self.dirty {
-            cx.data_mut(|d| d.insert_temp(self.id, self.state));
-            cx.request_repaint();
-        }
-    }
-
-    pub fn new_key_edit(&mut self, ui: &mut egui::Ui, reduce_text_width: f32) {
-        let text_edit = egui::TextEdit::singleline(&mut self.state.new_key)
-            .hint_text("new key")
-            .text_color_opt(if self.state.error {
-                Some(ui.visuals().error_fg_color)
-            } else {
-                None
-            })
-            .desired_width(ui.spacing().text_edit_width - reduce_text_width);
-
-        let r = ui.add(text_edit);
-        if r.changed() {
-            self.dirty = true;
-            self.state.error = false;
-        }
-    }
-
-    pub fn key_error(&mut self) {
-        if self.state.error {
-            return;
-        }
-        self.state.error = true;
-        self.dirty = true;
-    }
-
-    pub fn key_accepted(&mut self) {
-        if self.state.new_key.is_empty() {
-            return;
-        }
-        self.state.new_key.clear();
-        self.dirty = true;
-    }
-}
+use crate::map::HashMapProbe;
 
 impl<K, V, S> EguiProbe for HashMap<K, V, S>
 where
