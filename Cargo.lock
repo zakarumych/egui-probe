@@ -926,7 +926,7 @@ dependencies = [
  "parking_lot",
  "serde",
  "slab",
- "smallvec",
+ "smallvec 1.13.1",
  "tiny-fn",
 ]
 
@@ -1005,6 +1005,9 @@ dependencies = [
  "eframe",
  "egui",
  "egui-probe-proc",
+ "hashbrown",
+ "smallvec 1.13.1",
+ "smallvec 2.0.0-alpha.3",
 ]
 
 [[package]]
@@ -2055,7 +2058,7 @@ dependencies = [
  "cfg-if",
  "libc",
  "redox_syscall 0.4.1",
- "smallvec",
+ "smallvec 1.13.1",
  "windows-targets 0.48.5",
 ]
 
@@ -2460,6 +2463,12 @@ name = "smallvec"
 version = "1.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6ecd384b10a64542d77071bd64bd7b231f4ed5940fba55e98c3de13824cf3d7"
+
+[[package]]
+name = "smallvec"
+version = "2.0.0-alpha.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "030388a4fad918f857b2510fe5f217293eefdfcd895f2ec92b61b5c0df3f8bc2"
 
 [[package]]
 name = "smithay-client-toolkit"
@@ -2898,7 +2907,7 @@ dependencies = [
  "downcast-rs",
  "nix",
  "scoped-tls",
- "smallvec",
+ "smallvec 1.13.1",
  "wayland-sys",
 ]
 
@@ -3048,7 +3057,7 @@ dependencies = [
  "parking_lot",
  "profiling",
  "raw-window-handle 0.6.0",
- "smallvec",
+ "smallvec 1.13.1",
  "static_assertions",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -3077,7 +3086,7 @@ dependencies = [
  "profiling",
  "raw-window-handle 0.6.0",
  "rustc-hash",
- "smallvec",
+ "smallvec 1.13.1",
  "thiserror",
  "web-sys",
  "wgpu-hal",
@@ -3116,7 +3125,7 @@ dependencies = [
  "raw-window-handle 0.6.0",
  "renderdoc-sys",
  "rustc-hash",
- "smallvec",
+ "smallvec 1.13.1",
  "thiserror",
  "wasm-bindgen",
  "web-sys",

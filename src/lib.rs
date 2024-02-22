@@ -16,6 +16,10 @@ mod text;
 mod ui;
 mod vec;
 mod widget;
+#[cfg(any(feature = "smallvec1", feature = "smallvec2"))]
+mod small_vec;
+#[cfg(feature = "hashbrown")]
+mod hashbrown;
 
 pub use egui;
 
