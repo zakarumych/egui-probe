@@ -405,14 +405,17 @@ fn variant_probe(
 
     let tokens = quote::quote_spanned! {variant.ident.span() =>
         let checked = match self { #pattern => true, _ => false };
-        if _ui.selectable_label(checked, #name).clicked() {
-            if !checked {
-                *self = #construct;
-            }
-            // if _in_cbox {
-            //     _ui.close_menu();
-            // }
+        if _ui.selectable_label(checked, #name).clicked() && !checked {
+            *self = #construct;
         }
+        // if _ui.selectable_label(checked, #name).clicked() {
+        //     if !checked {
+        //         *self = #construct;
+        //     }
+        //     if _in_cbox {
+        //         _ui.close_menu();
+        //     }
+        // }
     };
 
     Ok(tokens)
