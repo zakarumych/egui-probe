@@ -106,17 +106,37 @@ pub trait EguiProbe {
     }
 }
 
-impl<F> EguiProbe for F
+impl<P> EguiProbe for Box<P>
 where
-    F: FnMut(&mut egui::Ui, &Style) -> egui::Response,
+    P: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        (self)(ui, style)
+        P::probe(&mut *self, ui, style)
     }
 }
 
+#[derive(Clone, Copy)]
+#[repr(transparent)]
+pub struct EguiProbeFn<F>(pub F);
+
+impl<F> EguiProbe for EguiProbeFn<F>
+where
+    F: FnMut(&mut egui::Ui, &Style) -> egui::Response,
+{
+    #[inline(always)]
+    fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
+        (self.0)(ui, style)
+    }
+}
+
+/// Wrap a function into probe-able.
+#[inline(always)]
+pub fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
+    EguiProbeFn(f)
+}
+
 pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
-    move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value)
+    probe_fn(move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value))
 }
 
 #[cfg(feature = "derive")]
@@ -144,7 +164,7 @@ pub mod private {
     where
         F: FnMut(&mut T, &mut egui::Ui, &Style) -> egui::Response + 'a,
     {
-        move |ui: &mut egui::Ui, style: &Style| f(value, ui, style)
+        probe_fn(move |ui: &mut egui::Ui, style: &Style| f(value, ui, style))
     }
 
     #[inline(always)]
@@ -174,7 +194,7 @@ pub mod private {
 
     #[inline(always)]
     pub fn probe_toggle_switch<'a>(value: &'a mut bool) -> impl EguiProbe + 'a {
-        move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui)
+        probe_fn(move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui))
     }
 
     #[inline(always)]

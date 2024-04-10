@@ -71,7 +71,9 @@ impl EguiProbe for Shadow {
     }
 
     fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("extrusion", &mut non_negative(&mut self.extrusion));
+        f("offset", &mut self.offset);
+        f("blur", &mut non_negative(&mut self.blur));
+        f("spread", &mut non_negative(&mut self.spread));
         f("color", &mut self.color);
     }
 }
