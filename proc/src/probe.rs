@@ -46,6 +46,7 @@ proc_easy::easy_parse! {
 }
 
 proc_easy::easy_parse! {
+    #[allow(unused)]
     #[derive(Clone, Copy)]
     enum RenameCase {
         SnakeCase(snake_case),

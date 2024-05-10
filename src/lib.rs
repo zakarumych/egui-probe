@@ -232,18 +232,6 @@ pub use egui_probe_proc::EguiProbe;
 #[cfg(feature = "derive")]
 #[doc(hidden)]
 pub mod private {
-    use crate::{
-        boolean::toggle_switch,
-        collections::EguiProbeFrozen,
-        color::{
-            EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
-        },
-        num::EguiProbeRange,
-        text::EguiProbeMultiline,
-    };
-
-    use super::*;
-
     pub use core::stringify;
     pub use super::customize::*;
 }
