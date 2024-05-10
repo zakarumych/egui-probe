@@ -25,8 +25,8 @@ where
         self.value.has_inner() && !self.delete
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        self.value.iterate_inner(f);
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        self.value.iterate_inner(ui, f);
     }
 }
 

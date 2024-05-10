@@ -304,8 +304,8 @@ fn show_table(
     );
 
     let mut idx = 0;
-    value.iterate_inner(&mut |label, value| {
-        let header = show_header(label, value, layout, indent + 1, &mut table_ui, style, idx);
+    value.iterate_inner(&mut table_ui, &mut |label, table_ui, value| {
+        let header = show_header(label, value, layout, indent + 1, table_ui, style, idx);
 
         if let Some(mut header) = header {
             if header.openness > 0.0 {
@@ -314,7 +314,7 @@ fn show_table(
                     &mut header,
                     layout,
                     indent + 1,
-                    &mut table_ui,
+                    table_ui,
                     style,
                     idx,
                 );

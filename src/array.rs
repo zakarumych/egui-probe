@@ -12,9 +12,9 @@ where
         N != 0
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (i, value) in self.iter_mut().enumerate() {
-            f(&format!("[{i}]"), value);
+            f(&format!("[{i}]"), ui, value);
         }
     }
 }
@@ -31,9 +31,9 @@ where
         N != 0
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (i, value) in self.iter_mut().enumerate() {
-            f(&format!("[{i}]"), value);
+            f(&format!("[{i}]"), ui, value);
         }
     }
 }
@@ -50,9 +50,9 @@ where
         !self.is_empty()
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (i, value) in self.iter_mut().enumerate() {
-            f(&format!("[{i}]"), value);
+            f(&format!("[{i}]"), ui, value);
         }
     }
 }

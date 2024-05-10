@@ -127,13 +127,13 @@ where
         !self.is_empty()
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         self.retain(|key, value| {
             let mut item = DeleteMe {
                 value,
                 delete: false,
             };
-            f(&key.to_string(), &mut item);
+            f(&key.to_string(), ui, &mut item);
             !item.delete
         });
     }
@@ -153,9 +153,9 @@ where
         !self.value.is_empty()
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (key, value) in self.value.iter_mut() {
-            f(&key.to_string(), value);
+            f(&key.to_string(), ui, value);
         }
     }
 }
@@ -179,10 +179,10 @@ where
         }
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         if let Some(map) = self.value {
             for (key, value) in map.iter_mut() {
-                f(&key.to_string(), value);
+                f(&key.to_string(), ui, value);
             }
         }
     }

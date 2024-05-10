@@ -13,9 +13,9 @@ impl EguiProbe for Stroke {
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("color", &mut self.color);
-        f("width", &mut non_negative(&mut self.width));
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        f("color", ui, &mut self.color);
+        f("width", ui, &mut non_negative(&mut self.width));
     }
 }
 
@@ -31,11 +31,11 @@ impl EguiProbe for Margin {
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("top", &mut non_negative(&mut self.top));
-        f("left", &mut non_negative(&mut self.left));
-        f("bottom", &mut non_negative(&mut self.bottom));
-        f("right", &mut non_negative(&mut self.right));
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        f("top", ui, &mut non_negative(&mut self.top));
+        f("left", ui, &mut non_negative(&mut self.left));
+        f("bottom", ui, &mut non_negative(&mut self.bottom));
+        f("right", ui, &mut non_negative(&mut self.right));
     }
 }
 
@@ -51,11 +51,11 @@ impl EguiProbe for Rounding {
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("nw", &mut non_negative(&mut self.nw));
-        f("ne", &mut non_negative(&mut self.ne));
-        f("sw", &mut non_negative(&mut self.sw));
-        f("se", &mut non_negative(&mut self.se));
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        f("nw", ui, &mut non_negative(&mut self.nw));
+        f("ne", ui, &mut non_negative(&mut self.ne));
+        f("sw", ui, &mut non_negative(&mut self.sw));
+        f("se", ui, &mut non_negative(&mut self.se));
     }
 }
 
@@ -70,11 +70,11 @@ impl EguiProbe for Shadow {
         true
     }
 
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("offset", &mut self.offset);
-        f("blur", &mut non_negative(&mut self.blur));
-        f("spread", &mut non_negative(&mut self.spread));
-        f("color", &mut self.color);
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        f("offset", ui, &mut self.offset);
+        f("blur", ui, &mut non_negative(&mut self.blur));
+        f("spread", ui, &mut non_negative(&mut self.spread));
+        f("color", ui, &mut self.color);
     }
 }
 
@@ -90,12 +90,12 @@ impl EguiProbe for Frame {
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        f("inner_margin", &mut self.inner_margin);
-        f("outer_margin", &mut self.outer_margin);
-        f("rounding", &mut self.rounding);
-        f("shadow", &mut self.shadow);
-        f("fill", &mut self.fill);
-        f("stroke", &mut self.stroke);
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        f("inner_margin", ui, &mut self.inner_margin);
+        f("outer_margin", ui, &mut self.outer_margin);
+        f("rounding", ui, &mut self.rounding);
+        f("shadow", ui, &mut self.shadow);
+        f("fill", ui, &mut self.fill);
+        f("stroke", ui, &mut self.stroke);
     }
 }

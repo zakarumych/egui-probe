@@ -599,7 +599,7 @@ fn variant_iterate_inner(
         let field_probe = &fields_probe[0];
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
-            #pattern => ::egui_probe::EguiProbe::iterate_inner(#field_probe, _f),
+            #pattern => ::egui_probe::EguiProbe::iterate_inner(#field_probe, _ui, _f),
         };
 
         Ok(tokens)
@@ -621,7 +621,7 @@ fn variant_iterate_inner(
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => {
-                #(_f(#fields_name, #fields_probe);)*
+                #(_f(#fields_name, _ui, #fields_probe);)*
             },
         };
 
@@ -716,12 +716,12 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             ::egui_probe::EguiProbe::has_inner(#field_probe)
                         }
 
-                        fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
+                        fn iterate_inner(&mut self, ui: &mut ::egui_probe::egui::Ui, f: &mut dyn FnMut(&str, &mut ::egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {
                             use ::egui_probe::private::*;
 
                             let #pattern = self;
 
-                            ::egui_probe::EguiProbe::iterate_inner(#field_probe, f)
+                            ::egui_probe::EguiProbe::iterate_inner(#field_probe, ui, f)
                         }
                     }
                 };
@@ -745,13 +745,13 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             true
                         }
 
-                        fn iterate_inner(&mut self, _f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
+                        fn iterate_inner(&mut self, _ui: &mut ::egui_probe::egui::Ui, _f: &mut dyn FnMut(&str, &mut ::egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {
                             use ::egui_probe::private::*;
 
                             let #pattern = self;
 
                             #(
-                                _f(#fields_name, #fields_probe);
+                                _f(#fields_name, _ui, #fields_probe);
                             )*
                         }
                     }
@@ -844,7 +844,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             )*}
                         }
 
-                        fn iterate_inner(&mut self, _f: &mut dyn FnMut(&str, &mut dyn ::egui_probe::EguiProbe)) {
+                        fn iterate_inner(&mut self, _ui: &mut egui_probe::egui::Ui, _f: &mut dyn FnMut(&str, &mut egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {
                             use ::egui_probe::private::*;
 
                             match self {#(

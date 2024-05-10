@@ -101,8 +101,8 @@ pub trait EguiProbe {
     /// It should add pairs of widgets to the UI for each record.
     /// If record has sub-records it should flatten them.
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        let _ = f;
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        let _ = (ui, f);
     }
 }
 
@@ -121,8 +121,8 @@ where
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
-        P::iterate_inner(&mut *self, f)
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+        P::iterate_inner(&mut *self, ui, f)
     }
 }
 

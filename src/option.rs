@@ -20,9 +20,9 @@ where
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         if let Some(value) = self {
-            value.iterate_inner(f);
+            value.iterate_inner(ui, f);
         }
     }
 }
