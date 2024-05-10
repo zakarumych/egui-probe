@@ -999,7 +999,7 @@ dependencies = [
 
 [[package]]
 name = "egui-probe"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "edict",
  "eframe",
@@ -1012,7 +1012,7 @@ dependencies = [
 
 [[package]]
 name = "egui-probe-proc"
-version = "0.3.4"
+version = "0.3.5"
 dependencies = [
  "convert_case",
  "proc-easy",

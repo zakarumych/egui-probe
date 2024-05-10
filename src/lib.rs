@@ -110,8 +110,19 @@ impl<P> EguiProbe for Box<P>
 where
     P: EguiProbe,
 {
+    #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
         P::probe(&mut *self, ui, style)
+    }
+
+    #[inline(always)]
+    fn has_inner(&mut self) -> bool {
+        P::has_inner(&mut *self)
+    }
+
+    #[inline(always)]
+    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+        P::iterate_inner(&mut *self, f)
     }
 }
 
@@ -135,6 +146,7 @@ pub fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)
 }
 
+#[inline(always)]
 pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
     probe_fn(move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value))
 }
