@@ -621,7 +621,7 @@ fn variant_iterate_inner(
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => {
-                #(_f(#fields_name, #fields_probe))*
+                #(_f(#fields_name, #fields_probe);)*
             },
         };
 
