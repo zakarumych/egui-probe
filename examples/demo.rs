@@ -116,8 +116,20 @@ struct InnerValue {
     hash_brown: hashbrown::HashMap<u8, f32>,
 }
 
+#[derive(Default, EguiProbe)]
+enum TopLevelEnum {
+    #[default]
+    Empty,
+    
+    Nums {
+        a: u64,
+        b: u64,
+    },
+}
+
 struct EguiProbeDemoApp {
     value: DemoValue,
+    e: TopLevelEnum,
 }
 
 impl EguiProbeDemoApp {
@@ -164,6 +176,7 @@ impl EguiProbeDemoApp {
                     map
                 },
             },
+            e: TopLevelEnum::Empty,
         }
     }
 }
@@ -177,6 +190,8 @@ impl eframe::App for EguiProbeDemoApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui|{
                 Probe::new("Value", &mut self.value).show(ui);
+
+                Probe::new("Enum", &mut self.e).show(ui);
             });
         });
     }

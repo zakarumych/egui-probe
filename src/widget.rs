@@ -1,5 +1,7 @@
 use core::hash::Hash;
 
+use egui::WidgetText;
+
 use crate::{EguiProbe, Style};
 
 #[derive(Clone, Copy)]
@@ -177,7 +179,6 @@ impl ProbeLayout {
 /// For complex values it will header with collapsible body.
 #[must_use = "You should call .show()"]
 pub struct Probe<'a, T> {
-    id_source: egui::Id,
     label: egui::WidgetText,
     style: Style,
     value: &'a mut T,
@@ -191,7 +192,7 @@ where
     pub fn new(label: impl Into<egui::WidgetText>, value: &'a mut T) -> Self {
         let label = label.into();
         Probe {
-            id_source: egui::Id::new(label.text()),
+            // id_source: egui::Id::new(label.text()),
             label,
             style: Style::default(),
             value,
@@ -200,48 +201,36 @@ where
 
     /// Show probbing UI to edit the value.
     pub fn show(self, ui: &mut egui::Ui) -> egui::Response {
-        if !self.value.has_inner() {
-            return self.value.probe(ui, &self.style);
-        }
-
         ui.allocate_ui(ui.available_size(), |ui| {
-            let ref mut child_ui = ui.child_ui_with_id_source(
+            let ref mut child_ui = ui.child_ui(
                 ui.max_rect(),
                 egui::Layout::top_down(egui::Align::Min),
-                self.id_source,
             );
 
-            let mut header =
-                ProbeHeader::load(child_ui.ctx(), child_ui.make_persistent_id("probe_header"));
+            let id = child_ui.next_auto_id();
 
-            egui::Frame::none()
-                .fill(child_ui.visuals().extreme_bg_color)
-                .inner_margin(child_ui.spacing().item_spacing * 0.5)
-                .show(child_ui, |child_ui| {
-                    child_ui.horizontal(|child_ui| {
-                        header.collapse_button(child_ui);
-                        child_ui.label(self.label);
-                    });
-                });
+            let mut layout = ProbeLayout::load(child_ui.ctx(), id);
 
-            if header.openness > 0.0 && self.value.has_inner() {
-                let mut layout =
-                    ProbeLayout::load(child_ui.ctx(), child_ui.make_persistent_id("probe_layout"));
+            let header = show_header(self.label, self.value, &mut layout, 0, child_ui, &self.style, id);
 
-                show_table(
-                    self.value,
-                    &mut header,
-                    &mut layout,
-                    0,
-                    child_ui,
-                    &self.style,
-                    "table",
-                );
+            if let Some(mut header) = header {
+                if header.openness > 0.0 {
 
-                layout.store(child_ui.ctx());
+                    show_table(
+                        self.value,
+                        &mut header,
+                        &mut layout,
+                        0,
+                        child_ui,
+                        &self.style,
+                        id,
+                    );
+                }
+
+                header.store(child_ui.ctx());
             }
 
-            header.store(child_ui.ctx());
+            layout.store(child_ui.ctx());
 
             let final_rect = child_ui.min_rect();
             ui.advance_cursor_after_rect(final_rect);
@@ -256,7 +245,7 @@ where
 }
 
 fn show_header(
-    label: &str,
+    label: impl Into<WidgetText>,
     value: &mut dyn EguiProbe,
     layout: &mut ProbeLayout,
     indent: usize,

@@ -1,6 +1,6 @@
 
 [workspace]
-package.version = "0.3.3"
+package.version = "0.3.4"
 package.edition = "2021"
 package.license = "MIT OR Apache-2.0"
 
@@ -15,7 +15,7 @@ description = "Trait and derive macro for exposing value editing in egui"
 derive = ["dep:egui-probe-proc"]
 
 [dependencies]
-egui-probe-proc = { path = "proc", version = "=0.3.3", optional = true }
+egui-probe-proc = { path = "proc", version = "=0.3.4", optional = true }
 egui = { version = "0.27" }
 
 smallvec1 = { package = "smallvec", version = "1", features = ["const_generics"], optional = true }
