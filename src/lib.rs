@@ -139,25 +139,13 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
     probe_fn(move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value))
 }
 
-#[cfg(feature = "derive")]
-pub use egui_probe_proc::EguiProbe;
+pub mod customize {
+    use crate::{num::EguiProbeRange, text::EguiProbeMultiline};
 
-#[cfg(feature = "derive")]
-#[doc(hidden)]
-pub mod private {
-    use crate::{
-        boolean::toggle_switch,
-        collections::EguiProbeFrozen,
-        color::{
-            EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
-        },
-        num::EguiProbeRange,
-        text::EguiProbeMultiline,
-    };
+    use self::{boolean::toggle_switch, collections::EguiProbeFrozen, color::{EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied}};
 
     use super::*;
 
-    pub use core::stringify;
 
     #[inline(always)]
     pub fn probe_with<'a, T, F>(mut f: F, value: &'a mut T) -> impl EguiProbe + 'a
@@ -236,4 +224,26 @@ pub mod private {
     {
         EguiProbeRgbaUnmultiplied { value }
     }
+}
+
+#[cfg(feature = "derive")]
+pub use egui_probe_proc::EguiProbe;
+
+#[cfg(feature = "derive")]
+#[doc(hidden)]
+pub mod private {
+    use crate::{
+        boolean::toggle_switch,
+        collections::EguiProbeFrozen,
+        color::{
+            EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
+        },
+        num::EguiProbeRange,
+        text::EguiProbeMultiline,
+    };
+
+    use super::*;
+
+    pub use core::stringify;
+    pub use super::customize::*;
 }
