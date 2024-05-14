@@ -90,7 +90,9 @@ where
     S: std::hash::BuildHasher,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        ui.horizontal(|ui| {
+        let mut changed = false;
+
+        let mut r = ui.horizontal(|ui| {
             let mut probe = HashMapProbe::load(ui.ctx(), ui.make_persistent_id("HashMapProbe"));
 
             let mut reduce_text_width = 0.0;
@@ -113,6 +115,7 @@ where
                 } else {
                     probe.key_error();
                 }
+                changed = true;
             }
 
             reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
@@ -120,11 +123,13 @@ where
             probe.new_key_edit(ui, reduce_text_width);
             probe.store(ui.ctx());
         })
-        .response
-    }
+        .response;
 
-    fn has_inner(&mut self) -> bool {
-        !self.is_empty()
+        if changed {
+            r.mark_changed();
+        }
+
+        r
     }
 
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
@@ -149,10 +154,6 @@ where
         ui.weak(format!("[{}]", self.value.len()))
     }
 
-    fn has_inner(&mut self) -> bool {
-        !self.value.is_empty()
-    }
-
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (key, value) in self.value.iter_mut() {
             f(&key.to_string(), ui, value);
@@ -167,16 +168,9 @@ where
     S: std::hash::BuildHasher + Default,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()));
+        option_probe_with(self.value, ui, style, || HashMap::with_hasher(S::default()), |value, ui, _style| {
+            ui.weak(format!("[{}]", value.len()))
         })
-    }
-
-    fn has_inner(&mut self) -> bool {
-        match self.value {
-            Some(value) => !value.is_empty(),
-            None => false,
-        }
     }
 
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {

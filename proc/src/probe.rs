@@ -483,75 +483,6 @@ fn variant_inline_probe(variant: &syn::Variant) -> syn::Result<proc_macro2::Toke
     }
 }
 
-fn variant_has_inner(variant: &syn::Variant) -> syn::Result<proc_macro2::TokenStream> {
-    let attributes: VariantAttributes =
-        proc_easy::EasyAttributes::parse(&variant.attrs, variant.span())?;
-
-    let ident = &variant.ident;
-
-    let pattern = match variant.fields {
-        syn::Fields::Unit => quote::quote!(Self::#ident),
-        syn::Fields::Unnamed(_) => quote::quote! {Self::#ident (..)},
-        syn::Fields::Named(_) => quote::quote! {Self::#ident {..}},
-    };
-
-    if attributes.transparent.is_some() {
-        let pattern = match variant.fields {
-            syn::Fields::Unit => quote::quote!(Self::#ident),
-            syn::Fields::Unnamed(ref fields) => {
-                let fields = fields
-                    .unnamed
-                    .iter()
-                    .enumerate()
-                    .map(|(idx, _)| quote::format_ident!("___{}", idx));
-                quote::quote! {Self::#ident ( #(#fields,)* )}
-            }
-            syn::Fields::Named(ref fields) => {
-                let fields = fields.named.iter().enumerate().map(|(idx, field)| {
-                    let binding = quote::format_ident!("___{}", idx);
-                    let ident = field.ident.as_ref().unwrap();
-                    quote::quote!(#ident: #binding)
-                });
-                quote::quote! {Self::#ident { #(#fields,)* }}
-            }
-        };
-
-        let fields_probe: Vec<_> = variant
-            .fields
-            .iter()
-            .enumerate()
-            .filter_map(|(idx, field)| field_probe(idx, field).transpose())
-            .collect::<syn::Result<_>>()?;
-
-        if fields_probe.len() != 1 {
-            return Err(syn::Error::new_spanned(
-                attributes.transparent.unwrap(),
-                "Transparent variant must have exactly one non-skipped field",
-            ));
-        }
-
-        let field_probe = &fields_probe[0];
-
-        let tokens = quote::quote_spanned! {variant.ident.span() =>
-            #pattern => ::egui_probe::EguiProbe::has_inner(#field_probe),
-        };
-
-        Ok(tokens)
-    } else {
-        let has_inner = match variant.fields {
-            syn::Fields::Unit => false,
-            syn::Fields::Unnamed(ref fields) => !fields.unnamed.is_empty(),
-            syn::Fields::Named(ref fields) => !fields.named.is_empty(),
-        };
-
-        let tokens = quote::quote_spanned! {variant.ident.span() =>
-            #pattern => #has_inner,
-        };
-
-        Ok(tokens)
-    }
-}
-
 fn variant_iterate_inner(
     variant: &syn::Variant,
     rename_case: Option<RenameCase>,
@@ -708,14 +639,6 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             ::egui_probe::EguiProbe::probe(#field_probe, ui, style)
                         }
 
-                        fn has_inner(&mut self) -> bool {
-                            use ::egui_probe::private::*;
-
-                            let #pattern = self;
-
-                            ::egui_probe::EguiProbe::has_inner(#field_probe)
-                        }
-
                         fn iterate_inner(&mut self, ui: &mut ::egui_probe::egui::Ui, f: &mut dyn FnMut(&str, &mut ::egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {
                             use ::egui_probe::private::*;
 
@@ -739,10 +662,6 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                     {
                         fn probe(&mut self, ui: &mut ::egui_probe::egui::Ui, _style: &::egui_probe::Style) -> ::egui_probe::egui::Response {
                             ui.weak(::egui_probe::private::stringify!(#ident))
-                        }
-
-                        fn has_inner(&mut self) -> bool {
-                            true
                         }
 
                         fn iterate_inner(&mut self, _ui: &mut ::egui_probe::egui::Ui, _f: &mut dyn FnMut(&str, &mut ::egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {
@@ -777,12 +696,6 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                 .variants
                 .iter()
                 .map(|variant| variant_inline_probe(variant))
-                .collect::<syn::Result<Vec<_>>>()?;
-
-            let variants_has_inner = data
-                .variants
-                .iter()
-                .map(|variant| variant_has_inner(variant))
                 .collect::<syn::Result<Vec<_>>>()?;
 
             let variants_iterate_inner = data
@@ -834,14 +747,6 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                                     #variants_inline_probe
                                 )*}
                             }).response
-                        }
-
-                        fn has_inner(&mut self) -> bool {
-                            use ::egui_probe::private::*;
-
-                            match self {#(
-                                #variants_has_inner
-                            )*}
                         }
 
                         fn iterate_inner(&mut self, _ui: &mut egui_probe::egui::Ui, _f: &mut dyn FnMut(&str, &mut egui_probe::egui::Ui, &mut dyn ::egui_probe::EguiProbe)) {

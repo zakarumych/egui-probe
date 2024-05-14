@@ -19,10 +19,6 @@ where
         .response
     }
 
-    fn has_inner(&mut self) -> bool {
-        !self.is_empty()
-    }
-
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         let mut idx = 0;
         self.retain_mut(|value| {
@@ -45,10 +41,6 @@ where
         ui.weak(format!("[{}]", self.value.len()))
     }
 
-    fn has_inner(&mut self) -> bool {
-        !self.value.is_empty()
-    }
-
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         for (i, value) in self.value.iter_mut().enumerate() {
             f(&format!("[{i}]"), ui, value);
@@ -61,16 +53,9 @@ where
     T: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()));
+        option_probe_with(self.value, ui, style, Vec::new, |value, ui, _style| {
+            ui.weak(format!("[{}]", value.len()))
         })
-    }
-
-    fn has_inner(&mut self) -> bool {
-        match self.value {
-            Some(value) => !value.is_empty(),
-            None => false,
-        }
     }
 
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {

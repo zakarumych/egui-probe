@@ -23,7 +23,7 @@ mod hashbrown;
 
 pub use egui;
 
-pub use self::widget::{Probe, ProbeLayout};
+pub use self::{widget::{Probe, ProbeLayout}, option::option_probe_with, collections::DeleteMe, boolean::toggle_switch};
 
 #[derive(Clone, Copy, Debug)]
 pub enum BooleanStyle {
@@ -89,13 +89,6 @@ pub trait EguiProbe {
     /// Shows probbing UI to edit the value.
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response;
 
-    /// Returns `true` if the value has sub-values for probbing.
-    /// This will cause the value to be
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        false
-    }
-
     /// Shows probbing UI to edit the inner values.
     ///
     /// It should add pairs of widgets to the UI for each record.
@@ -113,11 +106,6 @@ where
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
         P::probe(&mut *self, ui, style)
-    }
-
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        P::has_inner(&mut *self)
     }
 
     #[inline(always)]
@@ -154,7 +142,7 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
 pub mod customize {
     use crate::{num::EguiProbeRange, text::EguiProbeMultiline};
 
-    use self::{boolean::toggle_switch, collections::EguiProbeFrozen, color::{EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied}};
+    use self::{collections::EguiProbeFrozen, color::{EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied}};
 
     use super::*;
 

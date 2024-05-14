@@ -5,19 +5,28 @@ use crate::{
 };
 
 #[cfg(feature = "smallvec1")]
-impl<T, const N: usize> EguiProbe for smallvec1::SmallVec<[T;N]>
-    where
+impl<T, const N: usize> EguiProbe for smallvec1::SmallVec<[T; N]>
+where
     T: EguiProbe + Default,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        ui.horizontal(|ui| {
-            ui.weak(format!("[{}]", self.len()));
-            let r = ui.small_button(style.add_button_text());
-            if r.clicked() {
-                self.push(T::default());
-            }
-        })
-        .response
+        let mut changed = false;
+        let mut r = ui
+            .horizontal(|ui| {
+                ui.weak(format!("[{}]", self.len()));
+                let r = ui.small_button(style.add_button_text());
+                if r.clicked() {
+                    self.push(T::default());
+                    changed = true;
+                }
+            })
+            .response;
+
+        if changed {
+            r.mark_changed();
+        }
+
+        r
     }
 
     fn has_inner(&mut self) -> bool {
@@ -39,7 +48,7 @@ impl<T, const N: usize> EguiProbe for smallvec1::SmallVec<[T;N]>
 }
 
 #[cfg(feature = "smallvec1")]
-impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, smallvec1::SmallVec<[T;N]>>
+impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, smallvec1::SmallVec<[T; N]>>
 where
     T: EguiProbe,
 {
@@ -59,14 +68,18 @@ where
 }
 
 #[cfg(feature = "smallvec1")]
-impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, Option<smallvec1::SmallVec<[T;N]>>>
+impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, Option<smallvec1::SmallVec<[T; N]>>>
 where
     T: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()));
-        })
+        option_probe_with(
+            self.value,
+            ui,
+            style,
+            smallvec1::SmallVec::new,
+            |value, ui, _style| ui.weak(format!("[{}]", value.len())),
+        )
     }
 
     fn has_inner(&mut self) -> bool {
@@ -85,21 +98,29 @@ where
     }
 }
 
-
 #[cfg(feature = "smallvec2")]
-impl<T, const N: usize> EguiProbe for smallvec2::SmallVec<T,N>
-    where
-        T: EguiProbe + Default,
+impl<T, const N: usize> EguiProbe for smallvec2::SmallVec<T, N>
+where
+    T: EguiProbe + Default,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        ui.horizontal(|ui| {
-            ui.weak(format!("[{}]", self.len()));
-            let r = ui.small_button(style.add_button_text());
-            if r.clicked() {
-                self.push(T::default());
-            }
-        })
-            .response
+        let mut changed = false;
+        let mut r = ui
+            .horizontal(|ui| {
+                ui.weak(format!("[{}]", self.len()));
+                let r = ui.small_button(style.add_button_text());
+                if r.clicked() {
+                    self.push(T::default());
+                    changed = true;
+                }
+            })
+            .response;
+
+        if changed {
+            r.mark_changed();
+        }
+
+        r
     }
 
     fn has_inner(&mut self) -> bool {
@@ -121,9 +142,9 @@ impl<T, const N: usize> EguiProbe for smallvec2::SmallVec<T,N>
 }
 
 #[cfg(feature = "smallvec2")]
-impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, smallvec2::SmallVec<T,N>>
-    where
-        T: EguiProbe,
+impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, smallvec2::SmallVec<T, N>>
+where
+    T: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {
         ui.weak(format!("[{}]", self.value.len()))
@@ -141,13 +162,13 @@ impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, smallvec2::SmallVec<T,
 }
 
 #[cfg(feature = "smallvec2")]
-impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, Option<smallvec2::SmallVec<T,N>>>
-    where
-        T: EguiProbe,
+impl<T, const N: usize> EguiProbe for EguiProbeFrozen<'_, Option<smallvec2::SmallVec<T, N>>>
+where
+    T: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()));
+        option_probe_with(self.value, ui, style, smallvec2::SmallVec::new, |value, ui, _style| {
+            ui.weak(format!("[{}]", value.len()))
         })
     }
 

@@ -19,7 +19,9 @@ where
     S: std::hash::BuildHasher,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        ui.horizontal(|ui| {
+        let mut changed = false;
+
+        let mut r = ui.horizontal(|ui| {
             let mut probe = HashMapProbe::load(ui.ctx(), ui.make_persistent_id("HashMapProbe"));
 
             let mut reduce_text_width = 0.0;
@@ -42,6 +44,8 @@ where
                 } else {
                     probe.key_error();
                 }
+
+                changed = true;
             }
 
             reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
@@ -49,7 +53,13 @@ where
             probe.new_key_edit(ui, reduce_text_width);
             probe.store(ui.ctx());
         })
-        .response
+        .response;
+
+        if changed {
+            r.mark_changed();
+        }
+
+        r
     }
 
     fn has_inner(&mut self) -> bool {

@@ -57,10 +57,17 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, _: &Style) -> egui::Response {
                 let range = self.range.start..=$num_type::MAX;
-                ui.horizontal(|ui| {
-                    ui.add(egui::DragValue::new(self.value).clamp_range(range));
+                let mut changed = false;
+                let mut r = ui.horizontal(|ui| {
+                    changed |= ui.add(egui::DragValue::new(self.value).clamp_range(range)).changed();
                     ui.weak(format!("{}..", self.range.start));
-                }).response
+                }).response;
+
+                if changed {
+                    r.mark_changed();
+                }
+
+                r
             }
         }
 
@@ -68,10 +75,17 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, _: &Style) -> egui::Response {
                 let range = $num_type::MIN..=self.range.end;
-                ui.horizontal(|ui| {
-                    ui.add(egui::DragValue::new(self.value).clamp_range(range));
+                let mut changed = false;
+                let mut r = ui.horizontal(|ui| {
+                    changed |= ui.add(egui::DragValue::new(self.value).clamp_range(range)).changed();
                     ui.weak(format!("..={}", self.range.end));
-                }).response
+                }).response;
+
+                if changed {
+                    r.mark_changed();
+                }
+
+                r
             }
         }
 
@@ -79,10 +93,17 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, _: &Style) -> egui::Response {
                 let range = self.range.clone();
-                ui.horizontal(|ui| {
-                    ui.add(egui::DragValue::new(self.value).clamp_range(range));
+                let mut changed = false;
+                let mut r = ui.horizontal(|ui| {
+                    changed |= ui.add(egui::DragValue::new(self.value).clamp_range(range)).changed();
                     ui.weak(format!("{}..={}", self.range.start(), self.range.end()));
-                }).response
+                }).response;
+
+                if changed {
+                    r.mark_changed();
+                }
+
+                r
             }
         }
 
@@ -90,8 +111,8 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
                 let range = $num_type::MIN..=$num_type::MAX;
-                option_probe_with(self.value, ui, style, |value, ui, _| {
-                    ui.add(egui::DragValue::new(value).clamp_range(range));
+                option_probe_with(self.value, ui, style, $num_type::default, |value, ui, _| {
+                    ui.add(egui::DragValue::new(value).clamp_range(range))
                 })
             }
         }
@@ -100,9 +121,10 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
                 let range = self.range.start..=$num_type::MAX;
-                option_probe_with(self.value, ui, style, |value, ui, _| {
-                    ui.add(egui::DragValue::new(value).clamp_range(range));
+                option_probe_with(self.value, ui, style, $num_type::default, |value, ui, _| {
+                    let r = ui.add(egui::DragValue::new(value).clamp_range(range));
                     ui.weak(format!("{}..", self.range.start));
+                    r
                 })
             }
         }
@@ -111,9 +133,10 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
                 let range = $num_type::MIN..=self.range.end;
-                option_probe_with(self.value, ui, style, |value, ui, _| {
-                    ui.add(egui::DragValue::new(value).clamp_range(range));
+                option_probe_with(self.value, ui, style, $num_type::default, |value, ui, _| {
+                    let r = ui.add(egui::DragValue::new(value).clamp_range(range));
                     ui.weak(format!("..={}", self.range.end));
+                    r
                 })
             }
         }
@@ -122,9 +145,10 @@ macro_rules! impl_for_num_types {
             #[inline(always)]
             fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
                 let range = self.range.clone();
-                option_probe_with(self.value, ui, style, |value, ui, _| {
-                    ui.add(egui::DragValue::new(value).clamp_range(range));
+                option_probe_with(self.value, ui, style, $num_type::default, |value, ui, _| {
+                    let r = ui.add(egui::DragValue::new(value).clamp_range(range));
                     ui.weak(format!("{}..={}", self.range.start(), self.range.end()));
+                    r
                 })
             }
         }

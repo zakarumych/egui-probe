@@ -8,11 +8,6 @@ impl EguiProbe for Stroke {
     }
 
     #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        true
-    }
-
-    #[inline(always)]
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         f("color", ui, &mut self.color);
         f("width", ui, &mut non_negative(&mut self.width));
@@ -23,11 +18,6 @@ impl EguiProbe for Margin {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {
         ui.weak("Margin")
-    }
-
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        true
     }
 
     #[inline(always)]
@@ -45,10 +35,6 @@ impl EguiProbe for Rounding {
         ui.weak("Rounding")
     }
 
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        true
-    }
 
     #[inline(always)]
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
@@ -65,11 +51,6 @@ impl EguiProbe for Shadow {
         ui.weak("Shadow")
     }
 
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        true
-    }
-
     fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
         f("offset", ui, &mut self.offset);
         f("blur", ui, &mut non_negative(&mut self.blur));
@@ -82,11 +63,6 @@ impl EguiProbe for Frame {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {
         ui.weak("Frame")
-    }
-
-    #[inline(always)]
-    fn has_inner(&mut self) -> bool {
-        true
     }
 
     #[inline(always)]
