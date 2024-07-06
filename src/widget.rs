@@ -137,8 +137,12 @@ impl ProbeLayout {
         let min = egui::pos2(cursor.min.x, cursor.min.y);
         let rect = egui::Rect::from_min_max(min, max);
 
-        let mut label_ui =
-            ui.child_ui_with_id_source(rect.intersect(ui.max_rect()), *ui.layout(), id_source);
+        let mut label_ui = ui.child_ui_with_id_source(
+            rect.intersect(ui.max_rect()),
+            *ui.layout(),
+            id_source,
+            None,
+        );
         label_ui.set_clip_rect(
             ui.clip_rect()
                 .intersect(egui::Rect::everything_left_of(max.x)),
@@ -169,6 +173,7 @@ impl ProbeLayout {
             ui.cursor().intersect(ui.max_rect()),
             *ui.layout(),
             id_source,
+            None,
         );
 
         add_content(&mut value_ui);
@@ -209,8 +214,11 @@ where
 
         let mut r = ui
             .allocate_ui(ui.available_size(), |ui| {
-                let ref mut child_ui =
-                    ui.child_ui(ui.max_rect(), egui::Layout::top_down(egui::Align::Min));
+                let ref mut child_ui = ui.child_ui(
+                    ui.max_rect(),
+                    egui::Layout::top_down(egui::Align::Min),
+                    None,
+                );
 
                 let id = child_ui.next_auto_id();
 
@@ -324,6 +332,7 @@ fn show_table(
         table_rect,
         egui::Layout::top_down(egui::Align::Min),
         id_source,
+        None,
     );
     table_ui.set_clip_rect(
         ui.clip_rect()

@@ -8,7 +8,7 @@ fn main() {
     eframe::run_native(
         "egui-probe demo app",
         native_options,
-        Box::new(|cc| Box::new(EguiProbeDemoApp::new(cc))),
+        Box::new(|cc| Ok(Box::new(EguiProbeDemoApp::new(cc)))),
     )
     .unwrap();
 }
@@ -107,10 +107,10 @@ struct InnerValue {
     multi_line: String,
 
     #[cfg(feature = "smallvec1")]
-    small_vec_1: smallvec1::SmallVec<[String;4]>,
+    small_vec_1: smallvec1::SmallVec<[String; 4]>,
 
     #[cfg(feature = "smallvec2")]
-    small_vec_2: smallvec2::SmallVec<f32,4>,
+    small_vec_2: smallvec2::SmallVec<f32, 4>,
 
     #[cfg(feature = "hashbrown")]
     hash_brown: hashbrown::HashMap<u8, f32>,
@@ -175,7 +175,7 @@ impl eframe::App for EguiProbeDemoApp {
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui|{
+            egui::ScrollArea::vertical().show(ui, |ui| {
                 Probe::new("Value", &mut self.value).show(ui);
             });
         });
