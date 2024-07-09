@@ -1,16 +1,13 @@
-use std::{
-    fmt::Display,
-    str::FromStr,
-};
 use hashbrown::hash_map::Entry;
 use hashbrown::HashMap;
+use std::{fmt::Display, str::FromStr};
 
+use crate::map::HashMapProbe;
 use crate::{
     collections::{DeleteMe, EguiProbeFrozen},
     option::option_probe_with,
     EguiProbe, Style,
 };
-use crate::map::HashMapProbe;
 
 impl<K, V, S> EguiProbe for HashMap<K, V, S>
 where
@@ -21,39 +18,40 @@ where
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
         let mut changed = false;
 
-        let mut r = ui.horizontal(|ui| {
-            let mut probe = HashMapProbe::load(ui.ctx(), ui.make_persistent_id("HashMapProbe"));
+        let mut r = ui
+            .horizontal(|ui| {
+                let mut probe = HashMapProbe::load(ui.ctx(), ui.make_persistent_id("HashMapProbe"));
 
-            let mut reduce_text_width = 0.0;
+                let mut reduce_text_width = 0.0;
 
-            let r = ui.weak(format!("[{}]", self.len()));
-            reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
+                let r = ui.weak(format!("[{}]", self.len()));
+                reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
 
-            let r = ui.small_button(style.add_button_text());
-            if r.clicked() {
-                if let Ok(key) = K::from_str(&probe.state.new_key) {
-                    match self.entry(key) {
-                        Entry::Occupied(_) => {
-                            probe.key_error();
+                let r = ui.small_button(style.add_button_text());
+                if r.clicked() {
+                    if let Ok(key) = K::from_str(&probe.state.new_key) {
+                        match self.entry(key) {
+                            Entry::Occupied(_) => {
+                                probe.key_error();
+                            }
+                            Entry::Vacant(entry) => {
+                                entry.insert(V::default());
+                                probe.key_accepted();
+                            }
                         }
-                        Entry::Vacant(entry) => {
-                            entry.insert(V::default());
-                            probe.key_accepted();
-                        }
+                    } else {
+                        probe.key_error();
                     }
-                } else {
-                    probe.key_error();
+
+                    changed = true;
                 }
 
-                changed = true;
-            }
+                reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
 
-            reduce_text_width += r.rect.width() + ui.spacing().item_spacing.x;
-
-            probe.new_key_edit(ui, reduce_text_width);
-            probe.store(ui.ctx());
-        })
-        .response;
+                probe.new_key_edit(ui, reduce_text_width);
+                probe.store(ui.ctx());
+            })
+            .response;
 
         if changed {
             r.mark_changed();

@@ -8,6 +8,16 @@ use edict::{
 };
 use egui_probe::EguiProbe;
 
+fn main() {
+    let native_options = eframe::NativeOptions::default();
+    eframe::run_native(
+        "egui-probe demo app",
+        native_options,
+        Box::new(|cc| Ok(Box::new(EguiProbeEdictApp::new(cc)))),
+    )
+    .unwrap();
+}
+
 trait Inspect: EguiProbe + Value {
     fn inspect(&mut self, ui: &mut egui::Ui);
 }
@@ -17,7 +27,8 @@ where
     T: EguiProbe + Value,
 {
     fn inspect(&mut self, ui: &mut egui::Ui) {
-        egui_probe::Probe::new(self.name(), self).show(ui);
+        let name: egui::WidgetText = self.name().into();
+        egui_probe::Probe::new(self).with_header(name).show(ui);
     }
 }
 
@@ -46,16 +57,6 @@ macro_rules! entity_component {
             }
         }
     };
-}
-
-fn main() {
-    let native_options = eframe::NativeOptions::default();
-    eframe::run_native(
-        "egui-probe demo app",
-        native_options,
-        Box::new(|cc| Box::new(EguiProbeEdictApp::new(cc))),
-    )
-    .unwrap();
 }
 
 struct EguiProbeEdictApp {

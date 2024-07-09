@@ -167,9 +167,13 @@ where
     T: EguiProbe,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &crate::Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, smallvec2::SmallVec::new, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()))
-        })
+        option_probe_with(
+            self.value,
+            ui,
+            style,
+            smallvec2::SmallVec::new,
+            |value, ui, _style| ui.weak(format!("[{}]", value.len())),
+        )
     }
 
     fn has_inner(&mut self) -> bool {

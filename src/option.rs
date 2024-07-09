@@ -32,24 +32,34 @@ pub fn option_probe_with<T>(
     probe: impl FnOnce(&mut T, &mut egui::Ui, &Style) -> egui::Response,
 ) -> egui::Response {
     let mut changed = false;
-    let mut r = ui.horizontal(|ui| {
-        let mut checked = value.is_some();
+    let mut r = ui
+        .horizontal(|ui| {
+            let mut checked = value.is_some();
 
-        if ui.selectable_label(!checked, "None").clicked() {
-            checked = false;
-        }
-        if ui.selectable_label(checked, "Some").clicked() {
-            checked = true;
-        }
-        if checked != value.is_some() {
-            *value = Some(default());
-            changed = true;
-        }
-        if let Some(value) = value {
-            changed |= probe(value, ui, style).changed();
-        }
-    })
-    .response;
+            if ui.selectable_label(!checked, "None").clicked() {
+                checked = false;
+            }
+            if ui.selectable_label(checked, "Some").clicked() {
+                checked = true;
+            }
+
+            match (checked, value.is_some()) {
+                (true, false) => {
+                    *value = Some(default());
+                    changed = true;
+                }
+                (false, true) => {
+                    *value = None;
+                    changed = true;
+                }
+                _ => {}
+            }
+
+            if let Some(value) = value {
+                changed |= probe(value, ui, style).changed();
+            }
+        })
+        .response;
 
     if changed {
         r.mark_changed();

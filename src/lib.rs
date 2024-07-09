@@ -8,22 +8,27 @@ mod array;
 mod boolean;
 mod collections;
 mod color;
+#[cfg(feature = "hashbrown")]
+mod hashbrown;
 mod map;
 mod num;
 mod option;
 mod set;
+#[cfg(any(feature = "smallvec1", feature = "smallvec2"))]
+mod small_vec;
 mod text;
 mod ui;
 mod vec;
 mod widget;
-#[cfg(any(feature = "smallvec1", feature = "smallvec2"))]
-mod small_vec;
-#[cfg(feature = "hashbrown")]
-mod hashbrown;
 
 pub use egui;
 
-pub use self::{widget::{Probe, ProbeLayout}, option::option_probe_with, collections::DeleteMe, boolean::toggle_switch};
+pub use self::{
+    boolean::toggle_switch,
+    collections::DeleteMe,
+    option::option_probe_with,
+    widget::{Probe, ProbeLayout},
+};
 
 #[derive(Clone, Copy, Debug)]
 pub enum BooleanStyle {
@@ -94,7 +99,11 @@ pub trait EguiProbe {
     /// It should add pairs of widgets to the UI for each record.
     /// If record has sub-records it should flatten them.
     #[inline(always)]
-    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
         let _ = (ui, f);
     }
 }
@@ -109,7 +118,11 @@ where
     }
 
     #[inline(always)]
-    fn iterate_inner(&mut self, ui: &mut egui::Ui, f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe)) {
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
         P::iterate_inner(&mut *self, ui, f)
     }
 }
@@ -142,10 +155,14 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
 pub mod customize {
     use crate::{num::EguiProbeRange, text::EguiProbeMultiline};
 
-    use self::{collections::EguiProbeFrozen, color::{EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied}};
+    use self::{
+        collections::EguiProbeFrozen,
+        color::{
+            EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
+        },
+    };
 
     use super::*;
-
 
     #[inline(always)]
     pub fn probe_with<'a, T, F>(mut f: F, value: &'a mut T) -> impl EguiProbe + 'a
@@ -232,6 +249,6 @@ pub use egui_probe_proc::EguiProbe;
 #[cfg(feature = "derive")]
 #[doc(hidden)]
 pub mod private {
-    pub use core::stringify;
     pub use super::customize::*;
+    pub use core::stringify;
 }

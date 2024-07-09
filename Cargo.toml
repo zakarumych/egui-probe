@@ -1,6 +1,6 @@
 
 [workspace]
-package.version = "0.4.0"
+package.version = "0.5.1"
 package.edition = "2021"
 package.license = "MIT OR Apache-2.0"
 
@@ -15,16 +15,16 @@ description = "Trait and derive macro for exposing value editing in egui"
 derive = ["dep:egui-probe-proc"]
 
 [dependencies]
-egui-probe-proc = { path = "proc", version = "=0.4.0", optional = true }
-egui = { version = "0.27" }
+egui-probe-proc = { path = "proc", version = "=0.5.1", optional = true }
+egui = { version = "0.28" }
 
 smallvec1 = { package = "smallvec", version = "1", features = ["const_generics"], optional = true }
 smallvec2 = { package = "smallvec", version = "2.0.0-alpha.3", optional = true }
 hashbrown = { version = "0.14", optional = true }
 
 [dev-dependencies]
-eframe = "0.27"
-edict = { git = "https://github.com/zakarumych/edict.git", branch = "flow" }
+eframe = "0.28"
+edict = "0.6"
 
 [[example]]
 name = "demo"

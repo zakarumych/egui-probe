@@ -45,8 +45,12 @@ impl EguiProbe for EguiProbeMultiline<'_, Option<String>> {
 impl EguiProbe for EguiProbeMultiline<'_, Option<&str>> {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        option_probe_with(self.string, ui, style, || "", |string, ui, _| {
-            ui.add(egui::TextEdit::multiline(string))
-        })
+        option_probe_with(
+            self.string,
+            ui,
+            style,
+            || "",
+            |string, ui, _| ui.add(egui::TextEdit::multiline(string)),
+        )
     }
 }

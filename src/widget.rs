@@ -137,8 +137,12 @@ impl ProbeLayout {
         let min = egui::pos2(cursor.min.x, cursor.min.y);
         let rect = egui::Rect::from_min_max(min, max);
 
-        let mut label_ui =
-            ui.child_ui_with_id_source(rect.intersect(ui.max_rect()), *ui.layout(), id_source);
+        let mut label_ui = ui.child_ui_with_id_source(
+            rect.intersect(ui.max_rect()),
+            *ui.layout(),
+            id_source,
+            None,
+        );
         label_ui.set_clip_rect(
             ui.clip_rect()
                 .intersect(egui::Rect::everything_left_of(max.x)),
@@ -169,6 +173,7 @@ impl ProbeLayout {
             ui.cursor().intersect(ui.max_rect()),
             *ui.layout(),
             id_source,
+            None,
         );
 
         add_content(&mut value_ui);
@@ -183,7 +188,7 @@ impl ProbeLayout {
 /// For complex values it will header with collapsible body.
 #[must_use = "You should call .show()"]
 pub struct Probe<'a, T> {
-    label: egui::WidgetText,
+    header: Option<egui::WidgetText>,
     style: Style,
     value: &'a mut T,
 }
@@ -193,14 +198,18 @@ where
     T: EguiProbe,
 {
     /// Creates a new `Probe` widget.
-    pub fn new(label: impl Into<egui::WidgetText>, value: &'a mut T) -> Self {
-        let label = label.into();
+    pub fn new(value: &'a mut T) -> Self {
         Probe {
             // id_source: egui::Id::new(label.text()),
-            label,
+            header: None,
             style: Style::default(),
             value,
         }
+    }
+
+    pub fn with_header(mut self, label: impl Into<WidgetText>) -> Self {
+        self.header = Some(label.into());
+        self
     }
 
     /// Show probbing UI to edit the value.
@@ -209,28 +218,20 @@ where
 
         let mut r = ui
             .allocate_ui(ui.available_size(), |ui| {
-                let ref mut child_ui =
-                    ui.child_ui(ui.max_rect(), egui::Layout::top_down(egui::Align::Min));
+                let ref mut child_ui = ui.child_ui(
+                    ui.max_rect(),
+                    egui::Layout::top_down(egui::Align::Min),
+                    None,
+                );
 
                 let id = child_ui.next_auto_id();
 
                 let mut layout = ProbeLayout::load(child_ui.ctx(), id);
 
-                let mut header = show_header(
-                    self.label,
-                    self.value,
-                    &mut layout,
-                    0,
-                    child_ui,
-                    &self.style,
-                    id,
-                    &mut changed,
-                );
-
-                if header.openness > 0.0 {
-                    show_table(
+                if let Some(label) = self.header {
+                    let mut header = show_header(
+                        label,
                         self.value,
-                        &mut header,
                         &mut layout,
                         0,
                         child_ui,
@@ -238,17 +239,40 @@ where
                         id,
                         &mut changed,
                     );
+
+                    if header.openness > 0.0 {
+                        show_table(
+                            self.value,
+                            &mut header,
+                            &mut layout,
+                            0,
+                            child_ui,
+                            &self.style,
+                            id,
+                            &mut changed,
+                        );
+                    } else {
+                        let mut got_inner = false;
+
+                        self.value.iterate_inner(ui, &mut |_, _, _| {
+                            got_inner = true;
+                        });
+
+                        header.set_has_inner(got_inner);
+                    }
+
+                    header.store(child_ui.ctx());
                 } else {
-                    let mut got_inner = false;
-
-                    self.value.iterate_inner(ui, &mut |_, _, _| {
-                        got_inner = true;
-                    });
-
-                    header.set_has_inner(got_inner);
+                    show_table_direct(
+                        self.value,
+                        &mut layout,
+                        0,
+                        child_ui,
+                        &self.style,
+                        id,
+                        &mut changed,
+                    );
                 }
-
-                header.store(child_ui.ctx());
 
                 layout.store(child_ui.ctx());
 
@@ -324,6 +348,7 @@ fn show_table(
         table_rect,
         egui::Layout::top_down(egui::Align::Min),
         id_source,
+        None,
     );
     table_ui.set_clip_rect(
         ui.clip_rect()
@@ -379,4 +404,75 @@ fn show_table(
     ui.advance_cursor_after_rect(final_table_rect);
     let table_height = ui.cursor().min.y - table_rect.min.y;
     header.set_body_height(table_height);
+}
+
+fn show_table_direct(
+    value: &mut dyn EguiProbe,
+    layout: &mut ProbeLayout,
+    indent: usize,
+    ui: &mut egui::Ui,
+    style: &Style,
+    id_source: impl Hash,
+    changed: &mut bool,
+) {
+    let cursor = ui.cursor();
+
+    let table_rect =
+        egui::Rect::from_min_max(egui::pos2(cursor.min.x, cursor.min.y), ui.max_rect().max);
+
+    let mut table_ui = ui.child_ui_with_id_source(
+        table_rect,
+        egui::Layout::top_down(egui::Align::Min),
+        id_source,
+        None,
+    );
+    table_ui.set_clip_rect(
+        ui.clip_rect()
+            .intersect(egui::Rect::everything_below(ui.min_rect().max.y)),
+    );
+
+    let mut got_inner = false;
+    let mut idx = 0;
+    value.iterate_inner(&mut table_ui, &mut |label, table_ui, value| {
+        got_inner = true;
+
+        let mut header = show_header(
+            label,
+            value,
+            layout,
+            indent + 1,
+            table_ui,
+            style,
+            idx,
+            changed,
+        );
+
+        if header.openness > 0.0 {
+            show_table(
+                value,
+                &mut header,
+                layout,
+                indent + 1,
+                table_ui,
+                style,
+                idx,
+                changed,
+            );
+        } else {
+            let mut got_inner = false;
+
+            value.iterate_inner(ui, &mut |_, _, _| {
+                got_inner = true;
+            });
+
+            header.set_has_inner(got_inner);
+        }
+
+        header.store(table_ui.ctx());
+
+        idx += 1;
+    });
+
+    let final_table_rect = table_ui.min_rect();
+    ui.advance_cursor_after_rect(final_table_rect);
 }
