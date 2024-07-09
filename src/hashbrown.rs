@@ -60,17 +60,17 @@ where
         r
     }
 
-    fn has_inner(&mut self) -> bool {
-        !self.is_empty()
-    }
-
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
         self.retain(|key, value| {
             let mut item = DeleteMe {
                 value,
                 delete: false,
             };
-            f(&key.to_string(), &mut item);
+            f(&key.to_string(), ui, &mut item);
             !item.delete
         });
     }
@@ -86,13 +86,13 @@ where
         ui.weak(format!("[{}]", self.value.len()))
     }
 
-    fn has_inner(&mut self) -> bool {
-        !self.value.is_empty()
-    }
-
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
         for (key, value) in self.value.iter_mut() {
-            f(&key.to_string(), value);
+            f(&key.to_string(), ui, value);
         }
     }
 }
@@ -104,22 +104,23 @@ where
     S: std::hash::BuildHasher + Default,
 {
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        option_probe_with(self.value, ui, style, |value, ui, _style| {
-            ui.weak(format!("[{}]", value.len()));
-        })
+        option_probe_with(
+            self.value,
+            ui,
+            style,
+            || HashMap::with_hasher(S::default()),
+            |value, ui, _style| ui.weak(format!("[{}]", value.len())),
+        )
     }
 
-    fn has_inner(&mut self) -> bool {
-        match self.value {
-            Some(value) => !value.is_empty(),
-            None => false,
-        }
-    }
-
-    fn iterate_inner(&mut self, f: &mut dyn FnMut(&str, &mut dyn EguiProbe)) {
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
         if let Some(map) = self.value {
             for (key, value) in map.iter_mut() {
-                f(&key.to_string(), value);
+                f(&key.to_string(), ui, value);
             }
         }
     }

@@ -2,9 +2,9 @@
 
 use edict::{
     component::{Component, Value},
-    query::QueryBorrowAll,
+    entity::EntityId,
+    query::{BorrowAll, Entities},
     world::World,
-    Entities, EntityId,
 };
 use egui_probe::EguiProbe;
 
@@ -148,7 +148,7 @@ impl eframe::App for EguiProbeEdictApp {
                 if let Some(e) = *selected {
                     let e = world.entity(e).unwrap();
                     ui.vertical(|ui| {
-                        let mut view = e.view_one::<QueryBorrowAll<&mut (dyn Inspect + Send)>>();
+                        let mut view = e.view_one::<BorrowAll<&mut (dyn Inspect + Send)>>();
                         if let Some(components) = view.get_mut() {
                             for c in components {
                                 ui.separator();
