@@ -108,6 +108,25 @@ pub trait EguiProbe {
     }
 }
 
+impl<P> EguiProbe for &mut P
+where
+    P: EguiProbe,
+{
+    #[inline(always)]
+    fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
+        P::probe(&mut *self, ui, style)
+    }
+
+    #[inline(always)]
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
+        P::iterate_inner(&mut *self, ui, f)
+    }
+}
+
 impl<P> EguiProbe for Box<P>
 where
     P: EguiProbe,
