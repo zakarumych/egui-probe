@@ -137,11 +137,11 @@ impl ProbeLayout {
         let min = egui::pos2(cursor.min.x, cursor.min.y);
         let rect = egui::Rect::from_min_max(min, max);
 
-        let mut label_ui = ui.child_ui_with_id_source(
-            rect.intersect(ui.max_rect()),
-            *ui.layout(),
-            id_source,
-            None,
+        let mut label_ui = ui.new_child(
+            egui::UiBuilder::new()
+                .max_rect(rect.intersect(ui.max_rect()))
+                .layout(*ui.layout())
+                .id_salt(id_source),
         );
         label_ui.set_clip_rect(
             ui.clip_rect()
@@ -169,11 +169,11 @@ impl ProbeLayout {
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui),
     ) {
-        let mut value_ui = ui.child_ui_with_id_source(
-            ui.cursor().intersect(ui.max_rect()),
-            *ui.layout(),
-            id_source,
-            None,
+        let mut value_ui = ui.new_child(
+            egui::UiBuilder::new()
+                .max_rect(ui.cursor().intersect(ui.max_rect()))
+                .layout(*ui.layout())
+                .id_salt(id_source),
         );
 
         add_content(&mut value_ui);
@@ -218,10 +218,10 @@ where
 
         let mut r = ui
             .allocate_ui(ui.available_size(), |ui| {
-                let ref mut child_ui = ui.child_ui(
-                    ui.max_rect(),
-                    egui::Layout::top_down(egui::Align::Min),
-                    None,
+                let ref mut child_ui = ui.new_child(
+                    egui::UiBuilder::new()
+                        .max_rect(ui.max_rect())
+                        .layout(egui::Layout::top_down(egui::Align::Min)),
                 );
 
                 let id = child_ui.next_auto_id();
@@ -344,11 +344,11 @@ fn show_table(
         ui.max_rect().max,
     );
 
-    let mut table_ui = ui.child_ui_with_id_source(
-        table_rect,
-        egui::Layout::top_down(egui::Align::Min),
-        id_source,
-        None,
+    let mut table_ui = ui.new_child(
+        egui::UiBuilder::new()
+            .max_rect(table_rect)
+            .layout(egui::Layout::top_down(egui::Align::Min))
+            .id_salt(id_source),
     );
     table_ui.set_clip_rect(
         ui.clip_rect()
@@ -420,11 +420,11 @@ fn show_table_direct(
     let table_rect =
         egui::Rect::from_min_max(egui::pos2(cursor.min.x, cursor.min.y), ui.max_rect().max);
 
-    let mut table_ui = ui.child_ui_with_id_source(
-        table_rect,
-        egui::Layout::top_down(egui::Align::Min),
-        id_source,
-        None,
+    let mut table_ui = ui.new_child(
+        egui::UiBuilder::new()
+            .max_rect(table_rect)
+            .layout(egui::Layout::top_down(egui::Align::Min))
+            .id_salt(id_source),
     );
     table_ui.set_clip_rect(
         ui.clip_rect()
