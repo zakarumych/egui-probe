@@ -16,16 +16,16 @@ derive = ["dep:egui-probe-proc"]
 
 [dependencies]
 egui-probe-proc = { path = "proc", version = "=0.5.1", optional = true }
-egui = { version = "0.28" }
+egui = { version = "0.29" }
 
 smallvec1 = { package = "smallvec", version = "1", features = [
     "const_generics",
 ], optional = true }
-smallvec2 = { package = "smallvec", version = "2.0.0-alpha.3", optional = true }
-hashbrown = { version = "0.14", optional = true }
+smallvec2 = { package = "smallvec", version = "2.0.0-alpha.7", optional = true }
+hashbrown = { version = "0.15", optional = true }
 
 [dev-dependencies]
-eframe = "0.28"
+eframe = "0.29"
 edict = "0.6"
 
 [[example]]
