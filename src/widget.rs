@@ -126,7 +126,7 @@ impl ProbeLayout {
     pub fn inner_label_ui(
         &mut self,
         indent: usize,
-        id_source: impl Hash,
+        id_salt: impl Hash,
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui) -> egui::Response,
     ) -> egui::Response {
@@ -141,7 +141,7 @@ impl ProbeLayout {
             egui::UiBuilder::new()
                 .max_rect(rect.intersect(ui.max_rect()))
                 .layout(*ui.layout())
-                .id_salt(id_source),
+                .id_salt(id_salt),
         );
         label_ui.set_clip_rect(
             ui.clip_rect()
@@ -165,7 +165,7 @@ impl ProbeLayout {
 
     pub fn inner_value_ui(
         &mut self,
-        id_source: impl Hash,
+        id_salt: impl Hash,
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui),
     ) {
@@ -173,7 +173,7 @@ impl ProbeLayout {
             egui::UiBuilder::new()
                 .max_rect(ui.cursor().intersect(ui.max_rect()))
                 .layout(*ui.layout())
-                .id_salt(id_source),
+                .id_salt(id_salt),
         );
 
         add_content(&mut value_ui);
@@ -200,7 +200,7 @@ where
     /// Creates a new `Probe` widget.
     pub fn new(value: &'a mut T) -> Self {
         Probe {
-            // id_source: egui::Id::new(label.text()),
+            // id_salt: egui::Id::new(label.text()),
             header: None,
             style: Style::default(),
             value,
@@ -301,10 +301,10 @@ fn show_header(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_source: impl Hash,
+    id_salt: impl Hash,
     changed: &mut bool,
 ) -> ProbeHeader {
-    let id = ui.make_persistent_id(id_source);
+    let id = ui.make_persistent_id(id_salt);
 
     let mut header = ProbeHeader::load(ui.ctx(), id);
 
@@ -334,7 +334,7 @@ fn show_table(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_source: impl Hash,
+    id_salt: impl Hash,
     changed: &mut bool,
 ) {
     let cursor = ui.cursor();
@@ -348,7 +348,7 @@ fn show_table(
         egui::UiBuilder::new()
             .max_rect(table_rect)
             .layout(egui::Layout::top_down(egui::Align::Min))
-            .id_salt(id_source),
+            .id_salt(id_salt),
     );
     table_ui.set_clip_rect(
         ui.clip_rect()
@@ -412,7 +412,7 @@ fn show_table_direct(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_source: impl Hash,
+    id_salt: impl Hash,
     changed: &mut bool,
 ) {
     let cursor = ui.cursor();
@@ -424,7 +424,7 @@ fn show_table_direct(
         egui::UiBuilder::new()
             .max_rect(table_rect)
             .layout(egui::Layout::top_down(egui::Align::Min))
-            .id_salt(id_source),
+            .id_salt(id_salt),
     );
     table_ui.set_clip_rect(
         ui.clip_rect()

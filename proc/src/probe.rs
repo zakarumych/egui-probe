@@ -733,7 +733,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                                     }
                                     ::egui_probe::VariantsStyle::ComboBox => {
                                         let selected_variant = match self { #(#variants_selected,)* };
-                                        let cbox = ::egui_probe::egui::ComboBox::from_id_source(_ui.make_persistent_id("cbox")).selected_text(selected_variant);
+                                        let cbox = ::egui_probe::egui::ComboBox::from_id_salt(_ui.make_persistent_id("cbox")).selected_text(selected_variant);
                                         let _in_cbox = true;
                                         cbox.show_ui(_ui, |_ui| {
                                             #(

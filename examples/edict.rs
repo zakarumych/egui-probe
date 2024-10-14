@@ -78,7 +78,7 @@ impl eframe::App for EguiProbeEdictApp {
         let Self { world, selected } = self;
 
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
-            egui::widgets::global_dark_light_mode_switch(ui);
+            egui::widgets::global_theme_preference_switch(ui);
         });
 
         egui::SidePanel::left("entities").show(ctx, |ui| {
@@ -125,7 +125,7 @@ impl eframe::App for EguiProbeEdictApp {
             entities.sort();
 
             ui.vertical(|ui| {
-                let mut cbox = egui::ComboBox::from_id_source("selected-entity");
+                let mut cbox = egui::ComboBox::from_id_salt("selected-entity");
                 if let Some(e) = *selected {
                     if !entities.contains(&e) {
                         *selected = None;

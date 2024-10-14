@@ -26,7 +26,7 @@ hashbrown = { version = "0.15", optional = true }
 
 [dev-dependencies]
 eframe = "0.29"
-edict = "0.6"
+edict = "1.0.0-rc6"
 
 [[example]]
 name = "demo"

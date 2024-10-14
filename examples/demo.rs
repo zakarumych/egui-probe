@@ -171,7 +171,7 @@ impl EguiProbeDemoApp {
 impl eframe::App for EguiProbeDemoApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
-            egui::widgets::global_dark_light_mode_switch(ui);
+            egui::widgets::global_theme_preference_switch(ui);
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
