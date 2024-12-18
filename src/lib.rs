@@ -69,7 +69,7 @@ pub struct Style {
 impl Default for Style {
     #[inline]
     fn default() -> Self {
-        Self {
+        Style {
             boolean: BooleanStyle::default(),
             variants: VariantsStyle::default(),
             field_indent_size: None,
