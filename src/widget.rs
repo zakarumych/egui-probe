@@ -19,7 +19,7 @@ struct ProbeHeader {
 }
 
 impl ProbeHeader {
-    fn load(cx: &egui::Context, id: egui::Id) -> ProbeHeader {
+    fn load(cx: &egui::Context, id: egui::Id) -> Self {
         let state = cx.data_mut(|d| d.get_temp(id)).unwrap_or(ProbeHeaderState {
             has_inner: false,
             open: false,
@@ -28,7 +28,7 @@ impl ProbeHeader {
 
         let openness = cx.animate_bool(id, state.open);
 
-        ProbeHeader {
+        Self {
             id,
             state,
             dirty: false,
@@ -43,7 +43,7 @@ impl ProbeHeader {
         }
     }
 
-    pub fn has_inner(&self) -> bool {
+    pub const fn has_inner(&self) -> bool {
         self.state.has_inner
     }
 
@@ -98,9 +98,9 @@ pub struct ProbeLayout {
 }
 
 impl ProbeLayout {
-    fn load(cx: &egui::Context, id: egui::Id) -> ProbeLayout {
+    fn load(cx: &egui::Context, id: egui::Id) -> Self {
         let state = cx.data_mut(|d| *d.get_temp_mut_or(id, ProbeLayoutState { labels_width: 0.0 }));
-        ProbeLayout {
+        Self {
             id,
             state,
             dirty: false,
@@ -218,7 +218,7 @@ where
 
         let mut r = ui
             .allocate_ui(ui.available_size(), |ui| {
-                let ref mut child_ui = ui.new_child(
+                let child_ui = &mut ui.new_child(
                     egui::UiBuilder::new()
                         .max_rect(ui.max_rect())
                         .layout(egui::Layout::top_down(egui::Align::Min)),

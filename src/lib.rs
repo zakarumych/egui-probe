@@ -69,7 +69,7 @@ pub struct Style {
 impl Default for Style {
     #[inline]
     fn default() -> Self {
-        Style {
+        Self {
             boolean: BooleanStyle::default(),
             variants: VariantsStyle::default(),
             field_indent_size: None,
@@ -80,10 +80,12 @@ impl Default for Style {
 }
 
 impl Style {
+    #[must_use]
     pub fn add_button_text(&self) -> String {
         self.add_button_char.unwrap_or('+').to_string()
     }
 
+    #[must_use]
     pub fn remove_button_text(&self) -> String {
         self.remove_button_char.unwrap_or('-').to_string()
     }
@@ -123,7 +125,7 @@ where
         ui: &mut egui::Ui,
         f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
     ) {
-        P::iterate_inner(&mut *self, ui, f)
+        P::iterate_inner(*self, ui, f);
     }
 }
 
@@ -142,7 +144,7 @@ where
         ui: &mut egui::Ui,
         f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
     ) {
-        P::iterate_inner(&mut *self, ui, f)
+        P::iterate_inner(&mut *self, ui, f);
     }
 }
 
@@ -162,7 +164,7 @@ where
 
 /// Wrap a function into probe-able.
 #[inline(always)]
-pub fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
+pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)
 }
 
@@ -181,7 +183,7 @@ pub mod customize {
         },
     };
 
-    use super::*;
+    use super::{collections, color, egui, probe_fn, toggle_switch, EguiProbe, Style};
 
     #[inline(always)]
     pub fn probe_with<'a, T, F>(mut f: F, value: &'a mut T) -> impl EguiProbe + 'a

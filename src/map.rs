@@ -23,7 +23,7 @@ pub struct HashMapProbe {
 }
 
 impl HashMapProbe {
-    pub fn load(cx: &egui::Context, id: egui::Id) -> HashMapProbe {
+    pub fn load(cx: &egui::Context, id: egui::Id) -> Self {
         let state = cx.data_mut(|d| {
             d.get_temp_mut_or(
                 id,
@@ -35,7 +35,7 @@ impl HashMapProbe {
             .clone()
         });
 
-        HashMapProbe {
+        Self {
             state,
             dirty: false,
             id,

@@ -11,7 +11,7 @@ impl EguiProbe for bool {
 }
 
 /// Shows a toggle switch.
-/// https://github.com/emilk/egui/blob/master/crates/egui_demo_lib/src/demo/toggle_switch.rs
+/// <https://github.com/emilk/egui/blob/master/crates/egui_demo_lib/src/demo/toggle_switch.rs>
 pub fn toggle_switch(on: &mut bool, ui: &mut egui::Ui) -> egui::Response {
     let desired_size = ui.spacing().interact_size.y * egui::vec2(2.0, 1.0);
     let (rect, mut response) = ui.allocate_exact_size(desired_size, egui::Sense::click());
