@@ -150,7 +150,7 @@ impl FieldProbeKind {
         }
     }
 
-    fn error_when_skipped(&self) -> &'static str {
+    const fn error_when_skipped(&self) -> &'static str {
         macro_rules! format_error {
             ($name:literal) => {
                 concat!("Cannot use `", $name, "` attribute for skipped field")
