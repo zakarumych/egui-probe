@@ -38,3 +38,6 @@ required-features = ["derive"]
 [[example]]
 name = "edict"
 required-features = ["derive"]
+
+[package.metadata.docs.rs]
+features = ["derive"]

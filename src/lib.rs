@@ -21,7 +21,11 @@
 //!
 //! Derive `EguiProbe` for your types and use attributes to customize the UI:
 //!
-//! ```
+#![cfg_attr(feature = "derive", doc = "```")]
+#![cfg_attr(
+    not(feature = "derive"),
+    doc = "```ignore\n// This example requires the `derive` feature."
+)]
 //! use egui_probe::{EguiProbe, Probe, angle};
 //! use eframe::App;
 //!
