@@ -28,7 +28,7 @@ impl ProbeHeader {
 
         let openness = cx.animate_bool(id, state.open);
 
-        Self {
+        ProbeHeader {
             id,
             state,
             dirty: false,
@@ -100,7 +100,7 @@ pub struct ProbeLayout {
 impl ProbeLayout {
     fn load(cx: &egui::Context, id: egui::Id) -> Self {
         let state = cx.data_mut(|d| *d.get_temp_mut_or(id, ProbeLayoutState { labels_width: 0.0 }));
-        Self {
+        ProbeLayout {
             id,
             state,
             dirty: false,

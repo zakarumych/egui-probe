@@ -35,7 +35,7 @@ impl HashMapProbe {
             .clone()
         });
 
-        Self {
+        HashMapProbe {
             state,
             dirty: false,
             id,
