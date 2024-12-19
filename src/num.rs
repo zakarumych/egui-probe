@@ -8,7 +8,7 @@ pub struct EguiProbeRange<'a, T, R> {
     pub range: R,
 }
 
-pub fn non_negative<'a>(value: &'a mut f32) -> EguiProbeRange<'a, f32, RangeFrom<f32>> {
+pub fn non_negative(value: &mut f32) -> EguiProbeRange<'_, f32, RangeFrom<f32>> {
     EguiProbeRange {
         value,
         range: 0.0..,

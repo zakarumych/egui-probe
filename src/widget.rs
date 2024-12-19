@@ -43,7 +43,7 @@ impl ProbeHeader {
         }
     }
 
-    pub fn has_inner(&self) -> bool {
+    pub const fn has_inner(&self) -> bool {
         self.state.has_inner
     }
 
@@ -218,7 +218,7 @@ where
 
         let mut r = ui
             .allocate_ui(ui.available_size(), |ui| {
-                let ref mut child_ui = ui.new_child(
+                let child_ui = &mut ui.new_child(
                     egui::UiBuilder::new()
                         .max_rect(ui.max_rect())
                         .layout(egui::Layout::top_down(egui::Align::Min)),
@@ -294,6 +294,7 @@ where
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_header(
     label: impl Into<WidgetText>,
     value: &mut dyn EguiProbe,
@@ -327,6 +328,7 @@ fn show_header(
     header
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_table(
     value: &mut dyn EguiProbe,
     header: &mut ProbeHeader,

@@ -3,6 +3,8 @@
 //! This libraty provides a trait for value editing in egui.
 //! Powerful derive macros are provided for easy implementation on structs and enums.
 
+#![allow(clippy::inline_always, clippy::use_self)]
+
 mod algebra;
 mod array;
 mod boolean;
@@ -80,10 +82,12 @@ impl Default for Style {
 }
 
 impl Style {
+    #[must_use]
     pub fn add_button_text(&self) -> String {
         self.add_button_char.unwrap_or('+').to_string()
     }
 
+    #[must_use]
     pub fn remove_button_text(&self) -> String {
         self.remove_button_char.unwrap_or('-').to_string()
     }
@@ -114,7 +118,7 @@ where
 {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        P::probe(&mut *self, ui, style)
+        P::probe(*self, ui, style)
     }
 
     #[inline(always)]
@@ -123,7 +127,7 @@ where
         ui: &mut egui::Ui,
         f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
     ) {
-        P::iterate_inner(&mut *self, ui, f)
+        P::iterate_inner(*self, ui, f);
     }
 }
 
@@ -142,7 +146,7 @@ where
         ui: &mut egui::Ui,
         f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
     ) {
-        P::iterate_inner(&mut *self, ui, f)
+        P::iterate_inner(&mut *self, ui, f);
     }
 }
 
@@ -162,7 +166,7 @@ where
 
 /// Wrap a function into probe-able.
 #[inline(always)]
-pub fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
+pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)
 }
 
@@ -181,7 +185,7 @@ pub mod customize {
         },
     };
 
-    use super::*;
+    use super::{collections, color, egui, probe_fn, toggle_switch, EguiProbe, Style};
 
     #[inline(always)]
     pub fn probe_with<'a, T, F>(mut f: F, value: &'a mut T) -> impl EguiProbe + 'a
@@ -217,7 +221,7 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_toggle_switch<'a>(value: &'a mut bool) -> impl EguiProbe + 'a {
+    pub fn probe_toggle_switch(value: &mut bool) -> impl EguiProbe + '_ {
         probe_fn(move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui))
     }
 

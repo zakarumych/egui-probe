@@ -1,3 +1,5 @@
+#![allow(clippy::use_self)]
+
 use convert_case::Casing;
 use syn::{spanned::Spanned, LitStr};
 
@@ -150,7 +152,7 @@ impl FieldProbeKind {
         }
     }
 
-    fn error_when_skipped(&self) -> &'static str {
+    const fn error_when_skipped(&self) -> &'static str {
         macro_rules! format_error {
             ($name:literal) => {
                 concat!("Cannot use `", $name, "` attribute for skipped field")
@@ -449,21 +451,21 @@ fn variant_inline_probe(variant: &syn::Variant) -> syn::Result<proc_macro2::Toke
             }
         };
 
-        let fields_probe: Vec<_> = variant
+        let all_fields_probe: Vec<_> = variant
             .fields
             .iter()
             .enumerate()
             .filter_map(|(idx, field)| field_probe(idx, field).transpose())
             .collect::<syn::Result<_>>()?;
 
-        if fields_probe.len() != 1 {
+        if all_fields_probe.len() != 1 {
             return Err(syn::Error::new_spanned(
                 attributes.transparent.unwrap(),
                 "Transparent variant must have exactly one non-skipped field",
             ));
         }
 
-        let field_probe = &fields_probe[0];
+        let field_probe = &all_fields_probe[0];
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => {
@@ -513,21 +515,21 @@ fn variant_iterate_inner(
     };
 
     if attributes.transparent.is_some() {
-        let fields_probe: Vec<_> = variant
+        let all_fields_probe: Vec<_> = variant
             .fields
             .iter()
             .enumerate()
             .filter_map(|(idx, field)| field_probe(idx, field).transpose())
             .collect::<syn::Result<_>>()?;
 
-        if fields_probe.len() != 1 {
+        if all_fields_probe.len() != 1 {
             return Err(syn::Error::new_spanned(
                 attributes.transparent.unwrap(),
                 "Transparent variant must have exactly one non-skipped field",
             ));
         }
 
-        let field_probe = &fields_probe[0];
+        let field_probe = &all_fields_probe[0];
 
         let tokens = quote::quote_spanned! {variant.ident.span() =>
             #pattern => ::egui_probe::EguiProbe::iterate_inner(#field_probe, _ui, _f),
@@ -560,6 +562,7 @@ fn variant_iterate_inner(
     }
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let ident = &input.ident;
     let generics = &input.generics;
@@ -610,7 +613,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                 }
             };
 
-            let fields_probe: Vec<_> = data
+            let all_fields_probe: Vec<_> = data
                 .fields
                 .iter()
                 .enumerate()
@@ -618,14 +621,14 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                 .collect::<syn::Result<_>>()?;
 
             if attributes.transparent.is_some() {
-                if fields_probe.len() != 1 {
+                if all_fields_probe.len() != 1 {
                     return Err(syn::Error::new_spanned(
                         attributes.transparent.unwrap(),
                         "Transparent struct must have exactly one non-skipped field",
                     ));
                 }
 
-                let field_probe = &fields_probe[0];
+                let field_probe = &all_fields_probe[0];
 
                 let tokens = quote::quote! {
                     impl #impl_generics ::egui_probe::EguiProbe for #ident #ty_generics
@@ -670,7 +673,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                             let #pattern = self;
 
                             #(
-                                _f(#fields_name, _ui, #fields_probe);
+                                _f(#fields_name, _ui, #all_fields_probe);
                             )*
                         }
                     }
@@ -695,7 +698,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
             let variants_inline_probe = data
                 .variants
                 .iter()
-                .map(|variant| variant_inline_probe(variant))
+                .map(variant_inline_probe)
                 .collect::<syn::Result<Vec<_>>>()?;
 
             let variants_iterate_inner = data

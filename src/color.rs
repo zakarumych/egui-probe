@@ -33,7 +33,7 @@ impl EguiProbe for EguiProbeRgb<'_, Color32> {
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {
         egui::color_picker::color_edit_button_srgba(
             ui,
-            &mut self.value,
+            self.value,
             egui::color_picker::Alpha::Opaque,
         )
     }
