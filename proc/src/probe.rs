@@ -1,3 +1,5 @@
+#![allow(clippy::use_self)]
+
 use convert_case::Casing;
 use syn::{spanned::Spanned, LitStr};
 
