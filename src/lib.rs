@@ -3,6 +3,8 @@
 //! This libraty provides a trait for value editing in egui.
 //! Powerful derive macros are provided for easy implementation on structs and enums.
 
+#![allow(clippy::inline_always, clippy::use_self)]
+
 mod algebra;
 mod array;
 mod boolean;
