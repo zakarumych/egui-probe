@@ -1,5 +1,9 @@
 # Egui Probe
 
+[![docs.rs](https://img.shields.io/docsrs/egui-probe?style=for-the-badge)](https://docs.rs/egui-probe/)
+[![Crates.io Total Downloads](https://img.shields.io/crates/d/egui-probe?style=for-the-badge)](https://crates.io/crates/egui-probe)
+[![Discord](https://img.shields.io/discord/1270330377847832646?style=for-the-badge&logo=discord)](https://discord.com/channels/1270330377847832646/1319419862719922289)
+
 Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
 
 ## Features
