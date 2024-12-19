@@ -118,7 +118,7 @@ where
 {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        P::probe(&mut *self, ui, style)
+        P::probe(*self, ui, style)
     }
 
     #[inline(always)]
@@ -221,7 +221,7 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_toggle_switch<'a>(value: &'a mut bool) -> impl EguiProbe + 'a {
+    pub fn probe_toggle_switch(value: &mut bool) -> impl EguiProbe + '_ {
         probe_fn(move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui))
     }
 
