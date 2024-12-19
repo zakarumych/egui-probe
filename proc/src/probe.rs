@@ -560,6 +560,7 @@ fn variant_iterate_inner(
     }
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> {
     let ident = &input.ident;
     let generics = &input.generics;

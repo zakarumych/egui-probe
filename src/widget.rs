@@ -294,6 +294,7 @@ where
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_header(
     label: impl Into<WidgetText>,
     value: &mut dyn EguiProbe,
@@ -327,6 +328,7 @@ fn show_header(
     header
 }
 
+#[allow(clippy::too_many_arguments)]
 fn show_table(
     value: &mut dyn EguiProbe,
     header: &mut ProbeHeader,
