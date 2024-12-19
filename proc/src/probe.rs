@@ -64,13 +64,13 @@ impl RenameCase {
         let ident = ident.to_string();
 
         let converted = match self {
-            Self::SnakeCase(_) => ident.to_case(convert_case::Case::Snake),
-            Self::CamelCase(_) => ident.to_case(convert_case::Case::Camel),
-            Self::PascalCase(_) => ident.to_case(convert_case::Case::Pascal),
-            Self::ScreamingSnakeCase(_) => ident.to_case(convert_case::Case::ScreamingSnake),
-            Self::UpperSnakeCase(_) => ident.to_case(convert_case::Case::UpperSnake),
-            Self::KebabCase(_) => ident.to_case(convert_case::Case::Kebab),
-            Self::TrainCase(_) => ident.to_case(convert_case::Case::Train),
+            RenameCase::SnakeCase(_) => ident.to_case(convert_case::Case::Snake),
+            RenameCase::CamelCase(_) => ident.to_case(convert_case::Case::Camel),
+            RenameCase::PascalCase(_) => ident.to_case(convert_case::Case::Pascal),
+            RenameCase::ScreamingSnakeCase(_) => ident.to_case(convert_case::Case::ScreamingSnake),
+            RenameCase::UpperSnakeCase(_) => ident.to_case(convert_case::Case::UpperSnake),
+            RenameCase::KebabCase(_) => ident.to_case(convert_case::Case::Kebab),
+            RenameCase::TrainCase(_) => ident.to_case(convert_case::Case::Train),
         };
 
         syn::LitStr::new(&converted, ident.span())
@@ -137,16 +137,16 @@ proc_easy::easy_argument_group! {
 impl FieldProbeKind {
     fn span(&self) -> proc_macro2::Span {
         match self {
-            Self::With(with) => with.with.span(),
-            Self::ProbeAs(probe_as) => probe_as.probe_as.span(),
-            Self::Range(range) => range.range.span(),
-            Self::Multiline(multiline) => multiline.span(),
-            Self::ToggleSwitch(toggle_switch) => toggle_switch.span(),
-            Self::Frozen(frozen) => frozen.span(),
-            Self::Rgb(rgb) => rgb.span(),
-            Self::Rgba(rgba) => rgba.span(),
-            Self::RgbaPremultiplied(rgba_premultiplied) => rgba_premultiplied.span(),
-            Self::RgbaUnmultiplied(rgba_unmultiplied) => rgba_unmultiplied.span(),
+            FieldProbeKind::With(with) => with.with.span(),
+            FieldProbeKind::ProbeAs(probe_as) => probe_as.probe_as.span(),
+            FieldProbeKind::Range(range) => range.range.span(),
+            FieldProbeKind::Multiline(multiline) => multiline.span(),
+            FieldProbeKind::ToggleSwitch(toggle_switch) => toggle_switch.span(),
+            FieldProbeKind::Frozen(frozen) => frozen.span(),
+            FieldProbeKind::Rgb(rgb) => rgb.span(),
+            FieldProbeKind::Rgba(rgba) => rgba.span(),
+            FieldProbeKind::RgbaPremultiplied(rgba_premultiplied) => rgba_premultiplied.span(),
+            FieldProbeKind::RgbaUnmultiplied(rgba_unmultiplied) => rgba_unmultiplied.span(),
         }
     }
 
@@ -158,16 +158,16 @@ impl FieldProbeKind {
         }
 
         match self {
-            Self::With(_) => format_error!("with"),
-            Self::ProbeAs(_) => format_error!("as"),
-            Self::Range(_) => format_error!("range"),
-            Self::Multiline(_) => format_error!("multiline"),
-            Self::ToggleSwitch(_) => format_error!("toggle_switch"),
-            Self::Frozen(_) => format_error!("frozen"),
-            Self::Rgb(_) => format_error!("rgb"),
-            Self::Rgba(_) => format_error!("rgba"),
-            Self::RgbaPremultiplied(_) => format_error!("rgba_premultiplied"),
-            Self::RgbaUnmultiplied(_) => format_error!("rgba_unmultiplied"),
+            FieldProbeKind::With(_) => format_error!("with"),
+            FieldProbeKind::ProbeAs(_) => format_error!("as"),
+            FieldProbeKind::Range(_) => format_error!("range"),
+            FieldProbeKind::Multiline(_) => format_error!("multiline"),
+            FieldProbeKind::ToggleSwitch(_) => format_error!("toggle_switch"),
+            FieldProbeKind::Frozen(_) => format_error!("frozen"),
+            FieldProbeKind::Rgb(_) => format_error!("rgb"),
+            FieldProbeKind::Rgba(_) => format_error!("rgba"),
+            FieldProbeKind::RgbaPremultiplied(_) => format_error!("rgba_premultiplied"),
+            FieldProbeKind::RgbaUnmultiplied(_) => format_error!("rgba_unmultiplied"),
         }
     }
 }
