@@ -19,7 +19,7 @@ struct ProbeHeader {
 }
 
 impl ProbeHeader {
-    fn load(cx: &egui::Context, id: egui::Id) -> Self {
+    fn load(cx: &egui::Context, id: egui::Id) -> ProbeHeader {
         let state = cx.data_mut(|d| d.get_temp(id)).unwrap_or(ProbeHeaderState {
             has_inner: false,
             open: false,
@@ -98,7 +98,7 @@ pub struct ProbeLayout {
 }
 
 impl ProbeLayout {
-    fn load(cx: &egui::Context, id: egui::Id) -> Self {
+    fn load(cx: &egui::Context, id: egui::Id) -> ProbeLayout {
         let state = cx.data_mut(|d| *d.get_temp_mut_or(id, ProbeLayoutState { labels_width: 0.0 }));
         ProbeLayout {
             id,
