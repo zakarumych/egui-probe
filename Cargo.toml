@@ -1,8 +1,9 @@
 
-[workspace]
-package.version = "0.7.0"
-package.edition = "2021"
-package.license = "MIT OR Apache-2.0"
+[workspace.package]
+version = "0.7.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/zakarumych/egui-probe"
 
 [package]
 name = "egui-probe"
@@ -10,6 +11,8 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 description = "Trait and derive macro for exposing value editing in egui"
+documentation = "https://docs.rs/egui-probe"
+repository.workspace = true
 
 [features]
 derive = ["dep:egui-probe-proc"]
