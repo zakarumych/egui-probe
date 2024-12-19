@@ -696,7 +696,7 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
             let variants_inline_probe = data
                 .variants
                 .iter()
-                .map(|variant| variant_inline_probe(variant))
+                .map(variant_inline_probe)
                 .collect::<syn::Result<Vec<_>>>()?;
 
             let variants_iterate_inner = data
