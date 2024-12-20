@@ -19,6 +19,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Install MSRV
-      run: rustup install 1.80
+      run: rustup install 1.80.1
     - name: Test on MSRV
-      run: cargo +1.80 test
+      run: cargo +1.80.1 test

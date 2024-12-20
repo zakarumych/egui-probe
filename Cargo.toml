@@ -4,6 +4,7 @@ version = "0.7.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/zakarumych/egui-probe"
+rust-version = "1.80.1"
 
 [package]
 name = "egui-probe"
@@ -13,6 +14,7 @@ license.workspace = true
 description = "Trait and derive macro for exposing value editing in egui"
 documentation = "https://docs.rs/egui-probe"
 repository.workspace = true
+rust-version.workspace = true
 
 [features]
 derive = ["dep:egui-probe-proc"]

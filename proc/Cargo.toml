@@ -6,6 +6,7 @@ license.workspace = true
 description = "Derive macro for egui-probe crate"
 documentation = "https://docs.rs/egui-probe-proc"
 repository.workspace = true
+rust-version.workspace = true
 
 [lib]
 proc-macro = true
