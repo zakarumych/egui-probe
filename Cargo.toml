@@ -4,7 +4,7 @@ version = "0.7.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/zakarumych/egui-probe"
-rust-version = "1.80.1"
+rust-version = "1.81"
 
 [package]
 name = "egui-probe"
