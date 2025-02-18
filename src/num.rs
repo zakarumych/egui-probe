@@ -1,5 +1,7 @@
 use core::ops::{RangeFrom, RangeFull, RangeInclusive, RangeToInclusive};
 
+use egui::emath::Numeric;
+
 use crate::{option::option_probe_with, EguiProbe, Style};
 
 /// Bundles value and a range to show probbing UI to edit the value in that range.
@@ -8,10 +10,10 @@ pub struct EguiProbeRange<'a, T, R> {
     pub range: R,
 }
 
-pub fn non_negative(value: &mut f32) -> EguiProbeRange<'_, f32, RangeFrom<f32>> {
+pub fn non_negative<N: Numeric>(value: &mut N) -> EguiProbeRange<'_, N, RangeFrom<N>> {
     EguiProbeRange {
         value,
-        range: 0.0..,
+        range: N::from_f64(0.0)..,
     }
 }
 

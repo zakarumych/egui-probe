@@ -1,4 +1,4 @@
-use egui::{epaint::Shadow, Frame, Margin, Rounding, Stroke};
+use egui::{epaint::Shadow, CornerRadius, Frame, Margin, Stroke};
 
 use crate::{num::non_negative, EguiProbe};
 
@@ -37,7 +37,7 @@ impl EguiProbe for Margin {
     }
 }
 
-impl EguiProbe for Rounding {
+impl EguiProbe for CornerRadius {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {
         ui.weak("Rounding")
@@ -88,7 +88,7 @@ impl EguiProbe for Frame {
     ) {
         f("inner_margin", ui, &mut self.inner_margin);
         f("outer_margin", ui, &mut self.outer_margin);
-        f("rounding", ui, &mut self.rounding);
+        f("rounding", ui, &mut self.corner_radius);
         f("shadow", ui, &mut self.shadow);
         f("fill", ui, &mut self.fill);
         f("stroke", ui, &mut self.stroke);
