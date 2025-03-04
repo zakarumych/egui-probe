@@ -266,16 +266,18 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
 }
 
 pub mod customize {
-    use crate::{num::EguiProbeRange, text::EguiProbeMultiline};
-
-    use self::{
+    use super::{
+        boolean::ToggleSwitch,
         collections::EguiProbeFrozen,
         color::{
             EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
         },
+        egui,
+        num::EguiProbeRange,
+        probe_fn,
+        text::EguiProbeMultiline,
+        EguiProbe, Style,
     };
-
-    use super::{collections, color, egui, probe_fn, toggle_switch, EguiProbe, Style};
 
     #[inline(always)]
     pub fn probe_with<'a, T, F>(mut f: F, value: &'a mut T) -> impl EguiProbe + 'a
@@ -311,8 +313,11 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_toggle_switch(value: &mut bool) -> impl EguiProbe + '_ {
-        probe_fn(move |ui: &mut egui::Ui, _: &Style| toggle_switch(value, ui))
+    pub fn probe_toggle_switch<'a, T>(value: &'a mut T) -> impl EguiProbe + 'a
+    where
+        ToggleSwitch<'a, T>: EguiProbe,
+    {
+        ToggleSwitch(value)
     }
 
     #[inline(always)]
@@ -359,9 +364,90 @@ pub mod customize {
 #[cfg(feature = "derive")]
 pub use egui_probe_proc::EguiProbe;
 
+
+#[cfg(feature = "derive")]
+extern crate self as egui_probe;
+
 #[cfg(feature = "derive")]
 #[doc(hidden)]
 pub mod private {
     pub use super::customize::*;
     pub use core::stringify;
+}
+
+#[cfg(feature = "derive")]
+#[test]
+fn test_all_attributes() {
+    #![allow(unused)]
+
+    trait A {}
+
+    #[derive(EguiProbe)]
+    #[egui_probe(where T: EguiProbe)]
+    struct TypeAttributes<T> {
+        a: T,
+    }
+
+    struct NoProbe;
+
+    #[derive(EguiProbe)]
+    #[egui_probe(rename_all = Train-Case)]
+    struct FieldAttributes {
+        #[egui_probe(skip)]
+        skipped: NoProbe,
+
+        #[egui_probe(name  = "renamed")]
+        a: u8,
+
+        #[egui_probe(with |_, ui, _| ui.label("a label"))]
+        b: u8,
+
+        #[egui_probe(as angle)]
+        c: f32,
+
+        #[egui_probe(range = 0..=100)]
+        d: u8,
+
+        #[egui_probe(multiline)]
+        e: String,
+
+        #[egui_probe(multiline)]
+        f: Option<String>,
+
+        #[egui_probe(toggle_switch)]
+        g: bool,
+
+        #[egui_probe(toggle_switch)]
+        h: Option<bool>,
+
+        #[egui_probe(frozen)]
+        i: Vec<u8>,
+
+        #[egui_probe(rgb)]
+        j: egui::Color32,
+
+        #[egui_probe(rgba)]
+        k: egui::Color32,
+
+        #[egui_probe(rgba_premultiplied)]
+        l: [u8; 4],
+
+        #[egui_probe(rgba_unmultiplied)]
+        m: [f32; 4],
+    }
+
+    #[derive(EguiProbe)]
+    #[egui_probe(tags combobox)]
+    enum EnumAttributes {
+        #[egui_probe(name = "renamed")]
+        A,
+
+        #[egui_probe(transparent)]
+        B {
+            #[egui_probe(skip)]
+            skipped: (),
+
+            b: f32,
+        }
+    }
 }

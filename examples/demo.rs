@@ -51,6 +51,24 @@ impl Default for ComboBoxTags {
     }
 }
 
+#[derive(Default, EguiProbe)]
+#[egui_probe(rename_all = Train-Case)]
+struct InnerValue {
+    line: String,
+
+    #[egui_probe(multiline)]
+    multi_line: String,
+
+    #[cfg(feature = "smallvec1")]
+    small_vec_1: smallvec1::SmallVec<[String; 4]>,
+
+    #[cfg(feature = "smallvec2")]
+    small_vec_2: smallvec2::SmallVec<f32, 4>,
+
+    #[cfg(feature = "hashbrown")]
+    hash_brown: hashbrown::HashMap<u8, f32>,
+}
+
 #[derive(EguiProbe)]
 struct DemoValue {
     boolean: bool,
@@ -96,24 +114,6 @@ struct DemoValue {
 
     #[egui_probe(frozen)]
     frozen_map: HashMap<String, u32>,
-}
-
-#[derive(Default, EguiProbe)]
-#[egui_probe(rename_all = Train-Case)]
-struct InnerValue {
-    line: String,
-
-    #[egui_probe(multiline)]
-    multi_line: String,
-
-    #[cfg(feature = "smallvec1")]
-    small_vec_1: smallvec1::SmallVec<[String; 4]>,
-
-    #[cfg(feature = "smallvec2")]
-    small_vec_2: smallvec2::SmallVec<f32, 4>,
-
-    #[cfg(feature = "hashbrown")]
-    hash_brown: hashbrown::HashMap<u8, f32>,
 }
 
 struct EguiProbeDemoApp {
