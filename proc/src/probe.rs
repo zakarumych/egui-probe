@@ -683,6 +683,13 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
         }
 
         syn::Data::Enum(data) => {
+            if attributes.transparent.is_some() {
+                return Err(syn::Error::new_spanned(
+                    attributes.transparent.unwrap(),
+                    "Transparent may be specified only for structs or enum variants with exactly one non-skipped field",
+                ));
+            }
+
             let variants_selected = data
                 .variants
                 .iter()
