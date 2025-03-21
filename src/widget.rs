@@ -93,7 +93,6 @@ struct ProbeLayoutState {
 pub struct ProbeLayout {
     id: egui::Id,
     state: ProbeLayoutState,
-    dirty: bool,
     min_labels_width: f32,
 }
 
@@ -103,13 +102,12 @@ impl ProbeLayout {
         ProbeLayout {
             id,
             state,
-            dirty: false,
             min_labels_width: 0.0,
         }
     }
 
     fn store(mut self, cx: &egui::Context) {
-        if self.dirty {
+        if self.state.labels_width != self.min_labels_width {
             self.state.labels_width = self.min_labels_width;
             cx.data_mut(|d| d.insert_temp(self.id, self.state));
             cx.request_repaint();
@@ -119,7 +117,6 @@ impl ProbeLayout {
     fn bump_labels_width(&mut self, width: f32) {
         if self.min_labels_width < width {
             self.min_labels_width = width;
-            self.dirty = true;
         }
     }
 
