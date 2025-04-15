@@ -19,7 +19,7 @@ fn custom_probe(_: &mut Foo, ui: &mut egui::Ui, _: &egui_probe::Style) -> egui::
     ui.label("This is custom probe")
 }
 
-#[derive(EguiProbe)]
+#[derive(EguiProbe, Clone)]
 #[egui_probe(transparent)]
 struct UpTo7(#[egui_probe(range = ..=7)] u32);
 
@@ -69,6 +69,7 @@ struct InnerValue {
     hash_brown: hashbrown::HashMap<u8, f32>,
 }
 
+
 #[derive(EguiProbe)]
 struct DemoValue {
     boolean: bool,
@@ -81,7 +82,8 @@ struct DemoValue {
     #[egui_probe(range = 22..=55)]
     range: usize,
 
-    range_to: UpTo7,
+    #[egui_probe(default=UpTo7(5))]
+    maybe_range_to: Option<UpTo7>,
 
     #[egui_probe(range = 50..)]
     range_from: u8,
@@ -95,6 +97,7 @@ struct DemoValue {
     #[egui_probe(name = "renamed ^_^")]
     renamed: u8,
 
+    #[egui_probe(default = true)]
     maybe_boolean: Option<bool>,
 
     inner: InnerValue,
@@ -128,7 +131,7 @@ impl EguiProbeDemoApp {
                 boolean_toggle: false,
                 float: 0.0,
                 range: 22,
-                range_to: UpTo7(0),
+                maybe_range_to: Some(UpTo7(0)),
                 range_from: 100,
                 angle: 0.0,
                 custom: Foo,
