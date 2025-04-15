@@ -6,6 +6,7 @@ use syn::{spanned::Spanned, LitStr};
 proc_easy::easy_token!(skip);
 proc_easy::easy_token!(with);
 proc_easy::easy_token!(range);
+proc_easy::easy_token!(default);
 proc_easy::easy_token!(name);
 proc_easy::easy_token!(multiline);
 proc_easy::easy_token!(snake_case);
@@ -113,6 +114,13 @@ proc_easy::easy_argument_value! {
         expr: syn::Expr,
     }
 }
+proc_easy::easy_argument_value! {
+    struct Default {
+        default: default,
+
+        expr: syn::Expr,
+    }
+}
 
 proc_easy::easy_argument_value! {
     struct Name {
@@ -124,6 +132,7 @@ proc_easy::easy_argument_value! {
 proc_easy::easy_argument_group! {
     enum FieldProbeKind {
         Range(Range),
+        Default(Default),
         With(With),
         ProbeAs(ProbeAs),
         Multiline(multiline),
@@ -142,6 +151,7 @@ impl FieldProbeKind {
             FieldProbeKind::With(with) => with.with.span(),
             FieldProbeKind::ProbeAs(probe_as) => probe_as.probe_as.span(),
             FieldProbeKind::Range(range) => range.range.span(),
+            FieldProbeKind::Default(default) => default.default.span(),
             FieldProbeKind::Multiline(multiline) => multiline.span(),
             FieldProbeKind::ToggleSwitch(toggle_switch) => toggle_switch.span(),
             FieldProbeKind::Frozen(frozen) => frozen.span(),
@@ -163,6 +173,7 @@ impl FieldProbeKind {
             FieldProbeKind::With(_) => format_error!("with"),
             FieldProbeKind::ProbeAs(_) => format_error!("as"),
             FieldProbeKind::Range(_) => format_error!("range"),
+            FieldProbeKind::Default(_) => format_error!("default"),
             FieldProbeKind::Multiline(_) => format_error!("multiline"),
             FieldProbeKind::ToggleSwitch(_) => format_error!("toggle_switch"),
             FieldProbeKind::Frozen(_) => format_error!("frozen"),
@@ -304,6 +315,12 @@ fn field_probe(idx: usize, field: &syn::Field) -> syn::Result<Option<proc_macro2
             let expr = range.expr;
             quote::quote_spanned! {field.span() =>
                 &mut probe_range(#expr, #binding)
+            }
+        }
+        Some(FieldProbeKind::Default(default)) => {
+            let expr = default.expr;
+            quote::quote_spanned! {field.span() =>
+                &mut probe_default(#expr, #binding)
             }
         }
         Some(FieldProbeKind::Multiline(_)) => {

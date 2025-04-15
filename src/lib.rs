@@ -266,6 +266,8 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
 }
 
 pub mod customize {
+    use crate::option::EguiProbeDefault;
+
     use super::{
         boolean::ToggleSwitch,
         collections::EguiProbeFrozen,
@@ -302,6 +304,14 @@ pub mod customize {
         EguiProbeRange<'a, T, R>: EguiProbe,
     {
         EguiProbeRange { value, range }
+    }
+
+    #[inline(always)]
+    pub fn probe_default<'a, T>(default: T, value: &'a mut Option<T>) -> EguiProbeDefault<'a, T>
+    where
+    T: EguiProbe+Clone,
+    {
+        EguiProbeDefault { value, default }
     }
 
     #[inline(always)]
@@ -434,6 +444,9 @@ fn test_all_attributes() {
 
         #[egui_probe(rgba_unmultiplied)]
         m: [f32; 4],
+
+        #[egui_probe(default = "Hello World".to_string())]
+        n: Option<String>,
     }
 
     #[derive(EguiProbe)]

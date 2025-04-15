@@ -67,3 +67,29 @@ pub fn option_probe_with<T>(
 
     r
 }
+
+/// Bundles value and a range to show probbing UI to edit the value in that range.
+pub struct EguiProbeDefault<'a, T:EguiProbe+Clone> {
+    pub value: &'a mut Option<T>,
+    pub default: T,
+}
+
+impl<T:EguiProbe+Clone> EguiProbe for EguiProbeDefault<'_, T> {
+    #[inline(always)]
+    fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
+        option_probe_with(self.value, ui, style, ||self.default.clone(), |value, ui, style| {
+            value.probe(ui, style)
+        })
+    }
+
+    #[inline(always)]
+    fn iterate_inner(
+        &mut self,
+        ui: &mut egui::Ui,
+        f: &mut dyn FnMut(&str, &mut egui::Ui, &mut dyn EguiProbe),
+    ) {
+        if let Some(value) = self.value {
+            value.iterate_inner(ui, f);
+        }
+    }
+}
