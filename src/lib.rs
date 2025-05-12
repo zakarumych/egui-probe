@@ -266,6 +266,8 @@ pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
 }
 
 pub mod customize {
+    use std::ops::RangeFull;
+
     use super::{
         boolean::ToggleSwitch,
         collections::EguiProbeFrozen,
@@ -273,7 +275,7 @@ pub mod customize {
             EguiProbeRgb, EguiProbeRgba, EguiProbeRgbaPremultiplied, EguiProbeRgbaUnmultiplied,
         },
         egui,
-        num::EguiProbeRange,
+        num::{EguiProbeRange, StepUnset},
         probe_fn,
         text::EguiProbeMultiline,
         EguiProbe, Style,
@@ -301,7 +303,23 @@ pub mod customize {
     where
         EguiProbeRange<'a, T, R>: EguiProbe,
     {
-        EguiProbeRange { value, range }
+        EguiProbeRange { value, range, step: StepUnset }
+    }
+
+    #[inline(always)]
+    pub fn probe_range_step<'a, T, R, S>(range: R, step: S, value: &'a mut T) -> EguiProbeRange<'a, T, R, S>
+    where
+        EguiProbeRange<'a, T, R, S>: EguiProbe,
+    {
+        EguiProbeRange { value, range, step }
+    }
+
+    #[inline(always)]
+    pub fn probe_step<'a, T, S>(step: S, value: &'a mut T) -> EguiProbeRange<'a, T, RangeFull, S>
+    where
+        EguiProbeRange<'a, T, RangeFull, S>: EguiProbe,
+    {
+        EguiProbeRange { value, range: .., step }
     }
 
     #[inline(always)]

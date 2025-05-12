@@ -1,11 +1,12 @@
 #![allow(clippy::use_self)]
 
 use convert_case::Casing;
-use syn::{spanned::Spanned, LitStr};
+use syn::{parse::Parse, spanned::Spanned, LitStr};
 
 proc_easy::easy_token!(skip);
 proc_easy::easy_token!(with);
 proc_easy::easy_token!(range);
+proc_easy::easy_token!(by);
 proc_easy::easy_token!(name);
 proc_easy::easy_token!(multiline);
 proc_easy::easy_token!(snake_case);
@@ -105,12 +106,46 @@ proc_easy::easy_argument! {
     }
 }
 
+proc_easy::easy_parse! {
+    struct RangeStep {
+        by: by,
+
+        /// Expr type must match field type.
+        expr: syn::Expr,
+    }
+}
+
+struct RangeArg {
+    /// `EguiProbeRange<FieldType, ExprType>` must implement `EguiProbeWrapper`.
+    range: Option<syn::Expr>,
+
+    step: Option<RangeStep>,
+}
+
+impl Parse for RangeArg {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let range = if input.peek(by) {
+            None
+        } else {
+            Some(input.parse()?)
+        };
+
+        let step = if input.peek(by) {
+            Some(input.parse()?)
+        } else {
+            None
+        };
+
+        Ok(Self { range, step })
+    }
+}
+
+
 proc_easy::easy_argument_value! {
     struct Range {
         range: range,
-
         /// `EguiProbeRange<FieldType, ExprType>` must implement `EguiProbeWrapper`.
-        expr: syn::Expr,
+        arg: RangeArg,
     }
 }
 
@@ -301,9 +336,26 @@ fn field_probe(idx: usize, field: &syn::Field) -> syn::Result<Option<proc_macro2
             }
         }
         Some(FieldProbeKind::Range(range)) => {
-            let expr = range.expr;
-            quote::quote_spanned! {field.span() =>
-                &mut probe_range(#expr, #binding)
+
+            match (range.arg.range, range.arg.step) {
+                (None, None) => { unreachable!() }
+                (Some(range), None) => {
+                    quote::quote_spanned! {field.span() =>
+                        &mut probe_range(#range, #binding)
+                    }
+                }
+                (None, Some(step)) => {
+                    let step = step.expr;
+                    quote::quote_spanned! {field.span() =>
+                        &mut probe_step(#step, #binding)
+                    }
+                }
+                (Some(range), Some(step)) => {
+                    let step = step.expr;
+                    quote::quote_spanned! {field.span() =>
+                        &mut probe_range_step(#range, #step, #binding)
+                    }
+                }
             }
         }
         Some(FieldProbeKind::Multiline(_)) => {
