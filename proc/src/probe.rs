@@ -1,7 +1,7 @@
 #![allow(clippy::use_self)]
 
 use convert_case::Casing;
-use syn::{parse::Parse, spanned::Spanned, LitStr};
+use syn::{LitStr, parse::Parse, spanned::Spanned};
 
 proc_easy::easy_token!(skip);
 proc_easy::easy_token!(with);
@@ -70,7 +70,7 @@ impl RenameCase {
             RenameCase::SnakeCase(_) => ident.to_case(convert_case::Case::Snake),
             RenameCase::CamelCase(_) => ident.to_case(convert_case::Case::Camel),
             RenameCase::PascalCase(_) => ident.to_case(convert_case::Case::Pascal),
-            RenameCase::ScreamingSnakeCase(_) => ident.to_case(convert_case::Case::ScreamingSnake),
+            RenameCase::ScreamingSnakeCase(_) => ident.to_case(convert_case::Case::Constant),
             RenameCase::UpperSnakeCase(_) => ident.to_case(convert_case::Case::UpperSnake),
             RenameCase::KebabCase(_) => ident.to_case(convert_case::Case::Kebab),
             RenameCase::TrainCase(_) => ident.to_case(convert_case::Case::Train),
@@ -139,7 +139,6 @@ impl Parse for RangeArg {
         Ok(Self { range, step })
     }
 }
-
 
 proc_easy::easy_argument_value! {
     struct Range {
@@ -335,29 +334,28 @@ fn field_probe(idx: usize, field: &syn::Field) -> syn::Result<Option<proc_macro2
                 &mut probe_as(#expr, #binding)
             }
         }
-        Some(FieldProbeKind::Range(range)) => {
-
-            match (range.arg.range, range.arg.step) {
-                (None, None) => { unreachable!() }
-                (Some(range), None) => {
-                    quote::quote_spanned! {field.span() =>
-                        &mut probe_range(#range, #binding)
-                    }
-                }
-                (None, Some(step)) => {
-                    let step = step.expr;
-                    quote::quote_spanned! {field.span() =>
-                        &mut probe_step(#step, #binding)
-                    }
-                }
-                (Some(range), Some(step)) => {
-                    let step = step.expr;
-                    quote::quote_spanned! {field.span() =>
-                        &mut probe_range_step(#range, #step, #binding)
-                    }
+        Some(FieldProbeKind::Range(range)) => match (range.arg.range, range.arg.step) {
+            (None, None) => {
+                unreachable!()
+            }
+            (Some(range), None) => {
+                quote::quote_spanned! {field.span() =>
+                    &mut probe_range(#range, #binding)
                 }
             }
-        }
+            (None, Some(step)) => {
+                let step = step.expr;
+                quote::quote_spanned! {field.span() =>
+                    &mut probe_step(#step, #binding)
+                }
+            }
+            (Some(range), Some(step)) => {
+                let step = step.expr;
+                quote::quote_spanned! {field.span() =>
+                    &mut probe_range_step(#range, #step, #binding)
+                }
+            }
+        },
         Some(FieldProbeKind::Multiline(_)) => {
             quote::quote_spanned! {field.span() =>
                 &mut probe_multiline(#binding)
