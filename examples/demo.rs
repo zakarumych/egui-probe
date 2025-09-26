@@ -97,6 +97,8 @@ struct DemoValue {
 
     maybe_boolean: Option<bool>,
 
+    character: char,
+
     inner: InnerValue,
 
     inlined_tags: InlinedTags,
@@ -134,6 +136,7 @@ impl EguiProbeDemoApp {
                 custom: Foo,
                 renamed: 0,
                 maybe_boolean: None,
+                character: 'a',
                 inner: InnerValue {
                     line: "Hello, world!".to_owned(),
                     multi_line: "Hello,\nworld!".to_owned(),
