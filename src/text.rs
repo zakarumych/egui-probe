@@ -42,7 +42,7 @@ impl egui::text_edit::TextBuffer for CharBuffer {
 
     fn as_str(&self) -> &str {
         // SAFETY: prefix of buf is valid UTF-8
-        unsafe { str::from_utf8_unchecked(&self.buf[..self.ch.len_utf8()]) }
+        unsafe { std::str::from_utf8_unchecked(&self.buf[..self.ch.len_utf8()]) }
     }
 
     fn insert_text(&mut self, text: &str, char_index: usize) -> usize {
