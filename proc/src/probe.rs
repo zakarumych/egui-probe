@@ -457,6 +457,7 @@ fn variant_probe(
     };
 
     let tokens = quote::quote_spanned! {variant.ident.span() =>
+        #[allow(unreachable_patterns)]
         let checked = match self { #pattern => true, _ => false };
         if _ui.selectable_label(checked, #name).clicked() && !checked {
             *self = #construct;
