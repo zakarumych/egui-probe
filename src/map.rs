@@ -66,7 +66,7 @@ impl HashMapProbe {
         }
     }
 
-    pub fn key_error(&mut self) {
+    pub const fn key_error(&mut self) {
         if self.state.error {
             return;
         }

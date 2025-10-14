@@ -299,7 +299,7 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_range<'a, T, R>(range: R, value: &'a mut T) -> EguiProbeRange<'a, T, R>
+    pub const fn probe_range<'a, T, R>(range: R, value: &'a mut T) -> EguiProbeRange<'a, T, R>
     where
         EguiProbeRange<'a, T, R>: EguiProbe,
     {
@@ -311,7 +311,7 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_range_step<'a, T, R, S>(
+    pub const fn probe_range_step<'a, T, R, S>(
         range: R,
         step: S,
         value: &'a mut T,
@@ -323,7 +323,10 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_step<'a, T, S>(step: S, value: &'a mut T) -> EguiProbeRange<'a, T, RangeFull, S>
+    pub const fn probe_step<'a, T, S>(
+        step: S,
+        value: &'a mut T,
+    ) -> EguiProbeRange<'a, T, RangeFull, S>
     where
         EguiProbeRange<'a, T, RangeFull, S>: EguiProbe,
     {
@@ -335,7 +338,7 @@ pub mod customize {
     }
 
     #[inline(always)]
-    pub fn probe_multiline<'a, T>(string: &'a mut T) -> EguiProbeMultiline<'a, T>
+    pub const fn probe_multiline<'a, T>(string: &'a mut T) -> EguiProbeMultiline<'a, T>
     where
         EguiProbeMultiline<'a, T>: EguiProbe,
     {

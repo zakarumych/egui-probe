@@ -47,14 +47,14 @@ impl ProbeHeader {
         self.state.has_inner
     }
 
-    pub fn set_has_inner(&mut self, has_inner: bool) {
+    pub const fn set_has_inner(&mut self, has_inner: bool) {
         if self.state.has_inner != has_inner {
             self.state.has_inner = has_inner;
             self.dirty = true;
         }
     }
 
-    fn toggle(&mut self) {
+    const fn toggle(&mut self) {
         self.state.open = !self.state.open;
         self.dirty = true;
     }

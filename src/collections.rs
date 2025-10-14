@@ -17,7 +17,7 @@ where
                 ui.add_space(ui.spacing().item_spacing.x);
                 if ui.small_button(style.remove_button_text()).clicked() {
                     self.delete = true;
-                };
+                }
             })
             .response;
 
