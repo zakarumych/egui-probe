@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use egui_probe::{angle, Probe};
+use egui_probe::{Probe, angle};
 use egui_probe_proc::EguiProbe;
 
 fn main() {

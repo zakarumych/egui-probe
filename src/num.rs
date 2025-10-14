@@ -2,7 +2,7 @@ use core::ops::{RangeFrom, RangeFull, RangeInclusive, RangeToInclusive};
 
 use egui::emath::Numeric;
 
-use crate::{option::option_probe_with, EguiProbe, Style};
+use crate::{EguiProbe, Style, option::option_probe_with};
 
 /// Marker type to indicate that the step for range is not set.
 pub struct StepUnset;

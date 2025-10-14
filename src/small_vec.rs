@@ -1,7 +1,7 @@
 use crate::{
+    EguiProbe,
     collections::{DeleteMe, EguiProbeFrozen},
     option::option_probe_with,
-    EguiProbe,
 };
 
 #[cfg(feature = "smallvec1")]

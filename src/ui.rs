@@ -1,6 +1,6 @@
-use egui::{epaint::Shadow, CornerRadius, Frame, Margin, Stroke};
+use egui::{CornerRadius, Frame, Margin, Stroke, epaint::Shadow};
 
-use crate::{num::non_negative, EguiProbe};
+use crate::{EguiProbe, num::non_negative};
 
 impl EguiProbe for Stroke {
     fn probe(&mut self, ui: &mut egui::Ui, _style: &crate::Style) -> egui::Response {

@@ -1,12 +1,12 @@
-use hashbrown::hash_map::Entry;
 use hashbrown::HashMap;
+use hashbrown::hash_map::Entry;
 use std::{fmt::Display, str::FromStr};
 
 use crate::map::HashMapProbe;
 use crate::{
+    EguiProbe, Style,
     collections::{DeleteMe, EguiProbeFrozen},
     option::option_probe_with,
-    EguiProbe, Style,
 };
 
 impl<K, V, S> EguiProbe for HashMap<K, V, S>
