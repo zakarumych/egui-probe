@@ -1,6 +1,6 @@
 use std::{any::TypeId, ops::Range};
 
-use crate::{option::option_probe_with, EguiProbe, Style};
+use crate::{EguiProbe, Style, option::option_probe_with};
 
 impl EguiProbe for String {
     #[inline(always)]

@@ -1,6 +1,6 @@
 use egui::StrokeKind;
 
-use crate::{option_probe_with, BooleanStyle, EguiProbe, Style};
+use crate::{BooleanStyle, EguiProbe, Style, option_probe_with};
 
 pub struct ToggleSwitch<'a, T>(pub &'a mut T);
 
@@ -24,9 +24,13 @@ impl EguiProbe for ToggleSwitch<'_, bool> {
 impl EguiProbe for ToggleSwitch<'_, Option<bool>> {
     #[inline(always)]
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response {
-        option_probe_with(self.0, ui, style, ||false, |value, ui, _style| {
-            toggle_switch(value, ui)
-        })
+        option_probe_with(
+            self.0,
+            ui,
+            style,
+            || false,
+            |value, ui, _style| toggle_switch(value, ui),
+        )
     }
 }
 

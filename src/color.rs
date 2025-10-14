@@ -1,4 +1,4 @@
-use egui::{epaint::Hsva, Color32, Rgba};
+use egui::{Color32, Rgba, epaint::Hsva};
 
 use crate::EguiProbe;
 

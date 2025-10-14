@@ -1,13 +1,13 @@
 use std::{
-    collections::{hash_map::Entry, HashMap},
+    collections::{HashMap, hash_map::Entry},
     fmt::Display,
     str::FromStr,
 };
 
 use crate::{
+    EguiProbe, Style,
     collections::{DeleteMe, EguiProbeFrozen},
     option::option_probe_with,
-    EguiProbe, Style,
 };
 
 #[derive(Clone)]

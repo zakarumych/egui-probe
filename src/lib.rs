@@ -269,6 +269,7 @@ pub mod customize {
     use std::ops::RangeFull;
 
     use super::{
+        EguiProbe, Style,
         boolean::ToggleSwitch,
         collections::EguiProbeFrozen,
         color::{
@@ -278,7 +279,6 @@ pub mod customize {
         num::{EguiProbeRange, StepUnset},
         probe_fn,
         text::EguiProbeMultiline,
-        EguiProbe, Style,
     };
 
     #[inline(always)]
@@ -303,11 +303,19 @@ pub mod customize {
     where
         EguiProbeRange<'a, T, R>: EguiProbe,
     {
-        EguiProbeRange { value, range, step: StepUnset }
+        EguiProbeRange {
+            value,
+            range,
+            step: StepUnset,
+        }
     }
 
     #[inline(always)]
-    pub fn probe_range_step<'a, T, R, S>(range: R, step: S, value: &'a mut T) -> EguiProbeRange<'a, T, R, S>
+    pub fn probe_range_step<'a, T, R, S>(
+        range: R,
+        step: S,
+        value: &'a mut T,
+    ) -> EguiProbeRange<'a, T, R, S>
     where
         EguiProbeRange<'a, T, R, S>: EguiProbe,
     {
@@ -319,7 +327,11 @@ pub mod customize {
     where
         EguiProbeRange<'a, T, RangeFull, S>: EguiProbe,
     {
-        EguiProbeRange { value, range: .., step }
+        EguiProbeRange {
+            value,
+            range: ..,
+            step,
+        }
     }
 
     #[inline(always)]
@@ -382,7 +394,6 @@ pub mod customize {
 #[cfg(feature = "derive")]
 pub use egui_probe_proc::EguiProbe;
 
-
 #[cfg(feature = "derive")]
 extern crate self as egui_probe;
 
@@ -414,7 +425,7 @@ fn test_all_attributes() {
         #[egui_probe(skip)]
         skipped: NoProbe,
 
-        #[egui_probe(name  = "renamed")]
+        #[egui_probe(name = "renamed")]
         a: u8,
 
         #[egui_probe(with |_, ui, _| ui.label("a label"))]
@@ -466,6 +477,6 @@ fn test_all_attributes() {
             skipped: (),
 
             b: f32,
-        }
+        },
     }
 }
