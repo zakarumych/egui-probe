@@ -184,24 +184,26 @@ impl ProbeLayout {
 /// For simple values it will show a probe UI for it.
 /// For complex values it will header with collapsible body.
 #[must_use = "You should call .show()"]
-pub struct Probe<'a, T> {
+pub struct Probe<'a> {
     header: Option<egui::WidgetText>,
     style: Style,
-    value: &'a mut T,
+    value: &'a mut dyn EguiProbe,
 }
 
-impl<'a, T> Probe<'a, T>
-where
-    T: EguiProbe,
-{
+impl<'a> Probe<'a> {
     /// Creates a new `Probe` widget.
-    pub fn new(value: &'a mut T) -> Self {
+    pub fn new(value: &'a mut dyn EguiProbe) -> Self {
         Probe {
             // id_salt: egui::Id::new(label.text()),
             header: None,
             style: Style::default(),
             value,
         }
+    }
+
+    pub fn with_style(mut self, style: Style) -> Self {
+        self.style = style;
+        self
     }
 
     pub fn with_header(mut self, label: impl Into<WidgetText>) -> Self {
