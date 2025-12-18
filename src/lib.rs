@@ -18,7 +18,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! egui_probe = "0.5.2"
+//! egui_probe = "0.10.0"
 //! ```
 //!
 //! ## Awakening the Power
