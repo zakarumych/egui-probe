@@ -1,25 +1,29 @@
 //! # Egui Probe
 //!
-//! Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
+//! *I have gazed into the abyss of nested data structures, and the abyss has rendered itself back unto me...*
 //!
-//! ## Features
+//! Through arcane incantations of derive macros, one may summon forth UI widgets that peer into the very essence
+//! of value types, transmuting their hidden forms with attributes of unspeakable power. This grimoire binds exclusively
+//! to the ancient [egui](https://github.com/emilk/egui) UI framework—a covenant not to be broken.
 //!
-//! - 🪄 **Derive Macro**: Automatically generate UI widgets for your types.
-//! - 🎨 **Rich Customization**: Customize the generated widgets using attributes.
-//! - 🚀 **Seamless Integration**: Designed to work seamlessly with egui.
+//! ## The Revelations
 //!
-//! ## Getting Started
+//! - 🌑 **The Summoning Ritual**: Through profane derive macros, UI widgets manifest from the void, binding themselves to your types without mercy.
+//! - 👁️ **Whispered Configurations**: Shape the eldritch forms with attributes that twist reality itself, bending widgets to your unknowable will.
+//! - 🕸️ **The Unbreakable Binding**: Forged in darkness to merge seamlessly with egui, as if they were always meant to be one.
 //!
-//! Add `egui_probe` to your `Cargo.toml`:
+//! ## The First Incantation
+//!
+//! To begin your descent into this realm, inscribe the following into your `Cargo.toml`. Once written, there is no turning back:
 //!
 //! ```toml
 //! [dependencies]
 //! egui_probe = "0.5.2"
 //! ```
 //!
-//! ## Usage
+//! ## Awakening the Power
 //!
-//! Derive `EguiProbe` for your types and use attributes to customize the UI:
+//! Invoke `EguiProbe` upon your types—they shall never be the same. The attributes... they *change* things:
 //!
 #![cfg_attr(feature = "derive", doc = "```")]
 #![cfg_attr(
@@ -71,28 +75,32 @@
 //! }
 //! ```
 //!
-//! ## Attributes
+//! ## The Forbidden Markings
 //!
-//! - `#[egui_probe(toggle_switch)]`: Render a boolean as a toggle switch.
-//! - `#[egui_probe(range = 22..=55)]`: Specify a range for numeric values.
-//! - `#[egui_probe(as angle)]`: Render a float as an angle.
-//! - `#[egui_probe(name = "custom name")]`: Rename the field in the UI.
-//! - `#[egui_probe(multiline)]`: Render a string as a multiline text box.
+//! *These are but a few of the symbols. Each transforms, each binds:*
 //!
-//! ## License
+//! - `#[egui_probe(toggle_switch)]`: A boolean manifests as a switch between two states.
+//! - `#[egui_probe(range = 22..=55)]`: Numeric values constrained within invisible walls.
+//! - `#[egui_probe(as angle)]`: A float rendered as an angle—rotation made manifest.
+//! - `#[egui_probe(name = "custom name")]`: A false name, a mask worn before observers.
+//! - `#[egui_probe(multiline)]`: Strings unfold across the void, revealing their length.
 //!
-//! This project is licensed under either of
+//! ## The Covenant
+//!
+//! This grimoire exists under dual covenants:
 //!
 //! - MIT License
 //! - Apache License, Version 2.0
 //!
-//! at your option.
+//! Choose one. Choose both. The choice is yours.
 //!
-//! ## Contributing
+//! ## Those Who Would Contribute
 //!
-//! Contributions are welcome! Please open an issue or submit a pull request.
+//! Should you desire to add to this tome, open an issue or submit a pull request.
 //!
-//! Enjoy building your UI with Egui Probe! 🚀
+//! *Once you peer into the types, they peer back.*
+//!
+//! 🌘
 #![allow(clippy::inline_always, clippy::use_self)]
 
 mod algebra;
@@ -122,6 +130,8 @@ pub use self::{
     widget::{Probe, ProbeLayout},
 };
 
+/// The manner in which boolean values reveal themselves—checkbox or switch,
+/// each a gateway to binary truth.
 #[derive(Clone, Copy, Debug)]
 pub enum BooleanStyle {
     Checkbox,
@@ -135,6 +145,8 @@ impl Default for BooleanStyle {
     }
 }
 
+/// How enum variants manifest before mortal eyes—inlined across space,
+/// or collapsed within a combobox dropdown. Choose wisely.
 #[derive(Clone, Copy, Debug)]
 pub enum VariantsStyle {
     Inlined,
@@ -148,7 +160,8 @@ impl Default for VariantsStyle {
     }
 }
 
-/// Controls the style of probbing UI.
+/// Commands the aesthetic form of the probing interface—the visual rules
+/// by which the unseen becomes seen. Tread carefully when altering these configurations.
 #[derive(Clone, Copy, Debug)]
 pub struct Style {
     pub boolean: BooleanStyle,
@@ -183,15 +196,14 @@ impl Style {
     }
 }
 
-/// Provides ability to show probbing UI to values.
+/// Grants the ability to peer into values, to observe and manipulate them through the UI.
+/// Those who implement this trait surrender their privacy to the interface.
 pub trait EguiProbe {
-    /// Shows probbing UI to edit the value.
+    /// Manifests the probing UI—a window through which the value may be observed and altered.
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response;
 
-    /// Shows probbing UI to edit the inner values.
-    ///
-    /// It should add pairs of widgets to the UI for each record.
-    /// If record has sub-records it should flatten them.
+    /// Traverses the inner depths, revealing sub-values through iteration.
+    /// Each record exposed, each secret laid bare. If sub-records exist, they too shall be flattened.
     #[inline(always)]
     fn iterate_inner(
         &mut self,
@@ -240,6 +252,8 @@ where
     }
 }
 
+/// A function transformed into something probe-able—wrapped in a form
+/// that the interface can comprehend and invoke.
 #[derive(Clone, Copy)]
 #[repr(transparent)]
 pub struct EguiProbeFn<F>(pub F);
@@ -254,12 +268,13 @@ where
     }
 }
 
-/// Wrap a function into probe-able.
+/// Transmutes a function into something the probe can witness and wield.
 #[inline(always)]
 pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)
 }
 
+/// Renders a float as an angle—revealing rotation, arc, the turning of unseen gears.
 #[inline(always)]
 pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
     probe_fn(move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value))
