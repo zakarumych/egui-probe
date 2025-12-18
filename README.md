@@ -6,7 +6,7 @@
 
 *I have gazed into the abyss of nested data structures, and the abyss has rendered itself back unto me...*
 
-Through arcane incantations of derive macros, one may summon forth UI widgets that peer into the very essence of value types, transmuting their hidden forms with attributes of unspeakable power. This grimoire binds exclusively to the ancient [egui](https://github.com/emilk/egui) UI framework—a covenant not to be broken.
+Through arcane incantations of derive macros, one may summon forth UI widgets that peer into the very essence of value types, transmuting their hidden forms with attributes of unspeakable power. This grimoire binds exclusively to the ancient [egui](https://github.com/emilk/egui) UI framework - a covenant not to be broken.
 
 ## The Revelations
 
@@ -25,11 +25,11 @@ egui_probe = "0.10.0"
 
 ## Awakening the Power
 
-Invoke `EguiProbe` upon your types—they shall never be the same. The attributes... they *change* things. They must be used carefully, lest the results twist beyond recognition:
+Invoke `EguiProbe` upon your types - they shall never be the same. The attributes... they *change* things. They must be used carefully, lest the results twist beyond recognition:
 
 ### A Simple Glimpse
 
-Behold—a structure so innocent, so pure. Yet with a single derive, it becomes... *observable*:
+Behold - a structure so innocent, so pure. Yet with a single derive, it becomes... *observable*:
 
 ```rust
 #[derive(EguiProbe)]
@@ -40,7 +40,7 @@ struct SimpleValue {
 }
 ```
 
-The manifestation—gaze upon what has been wrought:
+The manifestation - gaze upon what has been wrought:
 
 ![Simple](./images/simple.png)
 
@@ -164,16 +164,16 @@ The result... I dare not look at it for too long. The widgets writhe with purpos
 ### Inscriptions Upon the Type Itself
 
 - `#[egui_probe(rename_all = kebab-case)]`: Warps the true names of all fields, reshaping them according to ancient naming conventions. The available incantations:
-    - `snake_case` — the serpent's whisper
-    - `camelCase` — the twin-humped beast
-    - `kebab-case` — the skewered words
-    - `PascalCase` — the scholar's cipher
-    - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE` — the banshee's wail
-    - `Train-Case` — the chained rhythm
+    - `snake_case` - the serpent's whisper
+    - `camelCase` - the twin-humped beast
+    - `kebab-case` - the skewered words
+    - `PascalCase` - the scholar's cipher
+    - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE` - the banshee's wail
+    - `Train-Case` - the chained rhythm
 
 - `#[egui_probe(where TypeA: TraitB)]`: Binds constraints upon the implementation, forging predicates that follow the syntax known to Rust. A contract written in compile-time blood.
 
-- `#[egui_probe(transparent)]`: The type becomes one with its singular field—no boundaries, no separation. It will not compile if there exists more than one non-skipped field, for such unity cannot be divided.
+- `#[egui_probe(transparent)]`: The type becomes one with its singular field - no boundaries, no separation. It will not compile if there exists more than one non-skipped field, for such unity cannot be divided.
 
 - `#[egui_probe(tags kind)]`: Commands how the myriad variants of enums shall manifest themselves before mortal eyes.
   When `kind` is `combobox`, a dropdown reveals the choices in orderly fashion.
@@ -182,7 +182,7 @@ The result... I dare not look at it for too long. The widgets writhe with purpos
 ### Marks Upon the Variant
 
 - `#[egui_probe(name = "custom name")]`: Bestows a new name upon the variant, concealing its original identity from those who observe the interface.
-- `#[egui_probe(transparent)]`: The variant dissolves into its singular field, becoming imperceptible as a separate entity. Compilation fails if the variant harbors more than one non-skipped field—such transparency demands singularity.
+- `#[egui_probe(transparent)]`: The variant dissolves into its singular field, becoming imperceptible as a separate entity. Compilation fails if the variant harbors more than one non-skipped field - such transparency demands singularity.
 
 ### Sigils Upon the Field
 
@@ -190,7 +190,7 @@ The result... I dare not look at it for too long. The widgets writhe with purpos
 
 - `#[egui_probe(name = "custom name")]`: Grants the field a false name, a mask worn in the interface's presence.
 
-- `#[egui_probe(with probe_fn)]`: Commands the field to render through a specified probe function—one bearing the signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`. Know that `probe_fn` may be an expression; closures lurk within this possibility.
+- `#[egui_probe(with probe_fn)]`: Commands the field to render through a specified probe function - one bearing the signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`. Know that `probe_fn` may be an expression; closures lurk within this possibility.
 
 - `#[egui_probe(as probe_fn)]`: Wraps the field in another form through a function of signature `fn(&mut FieldType) -> impl EguiProbe`. The field becomes something... else.
 
@@ -198,24 +198,24 @@ The result... I dare not look at it for too long. The widgets writhe with purpos
 
 - `#[egui_probe(multiline)]`: Unfolds a string across multiple lines, revealing its full text in a sprawling box. The field must be `String` or `&str`, or an option containing such whispers.
 
-- `#[egui_probe(toggle_switch)]`: A boolean manifests as a switch that toggles between states. The field must be `bool` or perhaps nothing—an optional boolean, existing and not existing.
+- `#[egui_probe(toggle_switch)]`: A boolean manifests as a switch that toggles between states. The field must be `bool` or perhaps nothing - an optional boolean, existing and not existing.
 
-- `#[egui_probe(frozen)]`: Collections rendered thus become immutable witnesses—displayed but untouchable, their elements neither added nor removed.
+- `#[egui_probe(frozen)]`: Collections rendered thus become immutable witnesses - displayed but untouchable, their elements neither added nor removed.
 
 - `#[egui_probe(rgb)]`: Summons an opaque color picker from RGB space itself. The field must be `egui::Color32`, `egui::Rgba`, `[u8; 3]`, or `[f32; 3]`.
 
-- `#[egui_probe(rgba)]`: Like `rgb`, but the alpha channel breathes with it—transparency made tangible. For `egui::Color32` and `egui::Rgba` only.
+- `#[egui_probe(rgba)]`: Like `rgb`, but the alpha channel breathes with it - transparency made tangible. For `egui::Color32` and `egui::Rgba` only.
 
 - `#[egui_probe(rgba_premultiplied)]`: Color with alpha, premultiplied in ways the ancients intended. Works with `egui::Color32`, `egui::Rgba`, `[u8; 4]`, and `[f32; 4]`.
 
-- `#[egui_probe(rgba_unmultiplied)]`: The alpha remains separate, unmultiplied—a dangerous independence. Cannot be invoked upon `egui::Color32` or `egui::Rgba`, for they exist only premultiplied. But `[u8; 4]` and `[f32; 4]` may bear this mark.
+- `#[egui_probe(rgba_unmultiplied)]`: The alpha remains separate, unmultiplied - a dangerous independence. Cannot be invoked upon `egui::Color32` or `egui::Rgba`, for they exist only premultiplied. But `[u8; 4]` and `[f32; 4]` may bear this mark.
 
 ## The Covenant
 
 This grimoire exists under dual covenants, sealed in ancient law:
 
-- MIT License — the permissive path
-- Apache License, Version 2.0 — the guarded way
+- MIT License - the permissive path
+- Apache License, Version 2.0 - the guarded way
 
 Choose one. Choose both. The choice, as always, is yours... for now.
 
@@ -223,7 +223,7 @@ Choose one. Choose both. The choice, as always, is yours... for now.
 
 Should you desire to add to this tome, to inscribe your own dark knowledge upon its pages, you are... *welcomed*. Open an issue. Submit a pull request. Join us in expanding the boundaries of what can be probed.
 
-*But know this—once you peer into the types, once you witness their inner workings laid bare before you... they peer back.*
+*But know this - once you peer into the types, once you witness their inner workings laid bare before you... they peer back.*
 
 May your UI forms never corrupt. May your values always bind. May the runtime never panic in places unknown.
 

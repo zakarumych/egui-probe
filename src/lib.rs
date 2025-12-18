@@ -4,7 +4,7 @@
 //!
 //! Through arcane incantations of derive macros, one may summon forth UI widgets that peer into the very essence
 //! of value types, transmuting their hidden forms with attributes of unspeakable power. This grimoire binds exclusively
-//! to the ancient [egui](https://github.com/emilk/egui) UI framework—a covenant not to be broken.
+//! to the ancient [egui](https://github.com/emilk/egui) UI framework - a covenant not to be broken.
 //!
 //! ## The Revelations
 //!
@@ -23,7 +23,7 @@
 //!
 //! ## Awakening the Power
 //!
-//! Invoke `EguiProbe` upon your types—they shall never be the same. The attributes... they *change* things:
+//! Invoke `EguiProbe` upon your types - they shall never be the same. The attributes... they *change* things:
 //!
 #![cfg_attr(feature = "derive", doc = "```")]
 #![cfg_attr(
@@ -81,7 +81,7 @@
 //!
 //! - `#[egui_probe(toggle_switch)]`: A boolean manifests as a switch between two states.
 //! - `#[egui_probe(range = 22..=55)]`: Numeric values constrained within invisible walls.
-//! - `#[egui_probe(as angle)]`: A float rendered as an angle—rotation made manifest.
+//! - `#[egui_probe(as angle)]`: A float rendered as an angle - rotation made manifest.
 //! - `#[egui_probe(name = "custom name")]`: A false name, a mask worn before observers.
 //! - `#[egui_probe(multiline)]`: Strings unfold across the void, revealing their length.
 //!
@@ -130,7 +130,7 @@ pub use self::{
     widget::{Probe, ProbeLayout},
 };
 
-/// The manner in which boolean values reveal themselves—checkbox or switch,
+/// The manner in which boolean values reveal themselves - checkbox or switch,
 /// each a gateway to binary truth.
 #[derive(Clone, Copy, Debug)]
 pub enum BooleanStyle {
@@ -145,7 +145,7 @@ impl Default for BooleanStyle {
     }
 }
 
-/// How enum variants manifest before mortal eyes—inlined across space,
+/// How enum variants manifest before mortal eyes - inlined across space,
 /// or collapsed within a combobox dropdown. Choose wisely.
 #[derive(Clone, Copy, Debug)]
 pub enum VariantsStyle {
@@ -160,7 +160,7 @@ impl Default for VariantsStyle {
     }
 }
 
-/// Commands the aesthetic form of the probing interface—the visual rules
+/// Commands the aesthetic form of the probing interface - the visual rules
 /// by which the unseen becomes seen. Tread carefully when altering these configurations.
 #[derive(Clone, Copy, Debug)]
 pub struct Style {
@@ -199,7 +199,7 @@ impl Style {
 /// Grants the ability to peer into values, to observe and manipulate them through the UI.
 /// Those who implement this trait surrender their privacy to the interface.
 pub trait EguiProbe {
-    /// Manifests the probing UI—a window through which the value may be observed and altered.
+    /// Manifests the probing UI - a window through which the value may be observed and altered.
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response;
 
     /// Traverses the inner depths, revealing sub-values through iteration.
@@ -252,7 +252,7 @@ where
     }
 }
 
-/// A function transformed into something probe-able—wrapped in a form
+/// A function transformed into something probe-able - wrapped in a form
 /// that the interface can comprehend and invoke.
 #[derive(Clone, Copy)]
 #[repr(transparent)]
@@ -274,7 +274,7 @@ pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)
 }
 
-/// Renders a float as an angle—revealing rotation, arc, the turning of unseen gears.
+/// Renders a float as an angle - revealing rotation, arc, the turning of unseen gears.
 #[inline(always)]
 pub fn angle(value: &mut f32) -> impl EguiProbe + '_ {
     probe_fn(move |ui: &mut egui::Ui, _style: &Style| ui.drag_angle(value))
