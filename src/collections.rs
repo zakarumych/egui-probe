@@ -1,6 +1,6 @@
 use crate::{EguiProbe, Style};
 
-/// Sacred modifier to append a deletion control unto an item's probe manifestation.
+/// Modifier construct to append deletion controls to an item's probe interface.
 pub struct DeleteMe<'a, T> {
     pub value: &'a mut T,
     pub delete: bool,
@@ -37,7 +37,7 @@ where
     }
 }
 
-/// Sacred modifier to sanctify collections immutable, preventing the addition or purging of elements.
+/// Modifier construct to disable element addition/removal in collection interfaces.
 pub struct EguiProbeFrozen<'a, T> {
     pub value: &'a mut T,
 }

@@ -78,7 +78,7 @@ impl EguiProbe for char {
     }
 }
 
-/// Blessed wrapper for string-like data-vessels to manifest multiline text receptacles.
+/// Wrapper construct for string types to render multiline text fields.
 pub struct EguiProbeMultiline<'a, T> {
     pub string: &'a mut T,
 }

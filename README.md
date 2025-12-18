@@ -4,17 +4,17 @@
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/egui-probe?style=for-the-badge)](https://crates.io/crates/egui-probe)
 [![Discord](https://img.shields.io/discord/1270330377847832646?style=for-the-badge&logo=discord)](https://discord.com/channels/1270330377847832646/1319419862719922289)
 
-By the blessed grace of the Omnissiah, manifest sacred UI widgets to observe and sanctify value types through the holy derive macro, enriched with divine customization via blessed attributes. This hallowed library serves exclusively the [egui](https://github.com/emilk/egui) UI framework, as ordained by the Machine God.
+By the Machine Spirit's will, manifest interface widgets to observe and modify data-constructs through the derive macro protocol, enhanced with advanced customization through attribute bindings. This cogitator library serves the [egui](https://github.com/emilk/egui) UI framework exclusively.
 
 ## Features
 
-- 🪄 **Derive Macro**: Through sacred rites, automatically conjure UI widgets for your blessed data-types.
-- 🎨 **Rich Customization**: Sanctify the manifested widgets through the application of holy attributes.
-- 🚀 **Seamless Integration**: Forged in perfect union with the egui framework by the will of the Machine Spirit.
+- 🪄 **Derive Macro**: Through automated protocols, generate interface widgets for your data-types.
+- 🎨 **Rich Customization**: Configure the generated widgets via attribute markers.
+- 🚀 **Seamless Integration**: Engineered for optimal interfacing with the egui framework.
 
 ## Getting Started
 
-Inscribe the sacred dependency `egui_probe` into your `Cargo.toml` manifest:
+Register the `egui_probe` dependency in your `Cargo.toml` manifest:
 
 ```toml
 [dependencies]
@@ -23,8 +23,8 @@ egui_probe = "0.5.2"
 
 ## Usage
 
-Invoke the blessed derivation of `EguiProbe` upon your data-types.
-Inscribe holy attributes to consecrate the interface manifestation:
+Apply the `EguiProbe` derivation protocol to your data-types.
+Utilize attribute markers to configure the interface:
 
 ### Simple Example
 
@@ -37,7 +37,7 @@ struct SimpleValue {
 }
 ```
 
-Behold the blessed manifestation granted by the Omnissiah:
+The resulting interface manifestation:
 
 ![Simple](./images/simple.png)
 
@@ -148,7 +148,7 @@ struct DemoValue {
 }
 ```
 
-Witness the sacred revelation bestowed upon the faithful:
+The resulting interface construct:
 
 ![Demo](./images/demo.png)
 
@@ -156,8 +156,8 @@ Witness the sacred revelation bestowed upon the faithful:
 
 ### Type Attributes
 
-- `#[egui_probe(rename_all = kebab-case)]`: Transubstantiates the nomenclature of all data-fields into the ordained case format.
-  Sacred case formats available to the Tech-Priest:
+- `#[egui_probe(rename_all = kebab-case)]`: Transcode all field designations into the specified case format.
+  Supported case protocols:
     - `snake_case`
     - `camelCase`
     - `kebab-case`
@@ -165,73 +165,73 @@ Witness the sacred revelation bestowed upon the faithful:
     - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE`
     - `Train-Case`
 
-- `#[egui_probe(where TypeA: TraitB)]`: Inscribes additional binding constraints unto the sacred `EguiProbe` implementation.
-  Predicates must adhere to the liturgical Rust syntax.
+- `#[egui_probe(where TypeA: TraitB)]`: Appends constraint clauses to the `EguiProbe` implementation.
+  Predicates follow standard Rust syntax protocols.
 
-- `#[egui_probe(transparent)]`: Renders the entire blessed structure as its singular inner field.
-  The Machine Spirit shall refuse compilation if the type possesses not exactly one non-excluded field.
+- `#[egui_probe(transparent)]`: Renders the complete type as its singular inner field.
+  Compilation will abort if the type lacks exactly one non-skipped field.
 
-- `#[egui_probe(tags kind)]`: Governs the manifestation of enumeration variants in the visual plane.
-  When the kind is ordained as `combobox`, a combobox interface serves as the variant selector.
-  When the kind is sanctified as `inlined`, the variant materializes inline through radio button consecration.
+- `#[egui_probe(tags kind)]`: Determines the rendering mechanism for enum variants.
+  When `combobox` is specified, a combobox selector is employed.
+  When `inlined` is specified, variants render inline via radio button controls.
 
 ### Variant Attributes
 
-- `#[egui_probe(name = "custom name")]`: Bestows a sacred designation upon the variant within the interface manifestation.
-- `#[egui_probe(transparent)]`: Renders the enumeration variant as its singular inner field.
-  The compilation rites shall fail if the variant harbors not precisely one non-excluded field.
+- `#[egui_probe(name = "custom name")]`: Override the variant designation in the interface.
+- `#[egui_probe(transparent)]`: Renders the variant as its singular inner field.
+  Compilation will abort if the variant lacks exactly one non-skipped field.
 
 ### Field Attributes
 
-- `#[egui_probe(skip)]`: Excludes the data-field from the sacred interface manifestation.
-  No other blessed attributes may coexist with this decree.
+- `#[egui_probe(skip)]`: Exclude the field from interface rendering.
+  This attribute cannot be combined with other attributes.
 
-- `#[egui_probe(name = "custom name")]`: Confers a sanctified designation upon the field within the interface.
+- `#[egui_probe(name = "custom name")]`: Override the field designation in the interface.
 
-- `#[egui_probe(with probe_fn)]`: Manifests the field through the ordained probe function ritual
-  bearing the holy signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`.
-  Know that `probe_fn` may be any expression, permitting the use of closure-bindings.
+- `#[egui_probe(with probe_fn)]`: Render the field via a specified probe function
+  with signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`.
+  Note that `probe_fn` may be any expression, enabling closure usage.
 
-- `#[egui_probe(as probe_fn)]`: Manifests the field via the specified probe function benediction
-  bearing the sacred signature `fn(&mut FieldType) -> impl EguiProbe`.
-  That is, encasing the field within a type that implements the holy `EguiProbe` trait.
+- `#[egui_probe(as probe_fn)]`: Render the field via a specified probe function
+  with signature `fn(&mut FieldType) -> impl EguiProbe`.
+  This wraps the field in a type implementing the `EguiProbe` trait.
 
-- `#[egui_probe(range = 22..=55)]`: Ordains the permissible boundaries for numeric value sanctification.
-  Functions equally upon optional-wrapped numerics.
+- `#[egui_probe(range = 22..=55)]`: Define bounds for numeric value manipulation.
+  Compatible with optional types.
 
-- `#[egui_probe(multiline)]`: Renders string data as a multiline text receptacle.
-  The field must be blessed with type `String` or `&str`, or an optional vessel thereof.
+- `#[egui_probe(multiline)]`: Render string data as a multiline text input.
+  Field type must be `String` or `&str`, or an optional variant thereof.
 
-- `#[egui_probe(toggle_switch)]`: Materializes boolean truth-values as a toggle switch apparatus.
-  The field must embody type `bool` or an optional container of such.
+- `#[egui_probe(toggle_switch)]`: Render boolean values as a toggle switch mechanism.
+  Field type must be `bool` or an optional variant thereof.
 
-- `#[egui_probe(frozen)]`: Renders collection-structures without the sacred controls for element addition or purging.
+- `#[egui_probe(frozen)]`: Renders collections with element modification controls disabled.
 
-- `#[egui_probe(rgb)]`: Conjures an opaque chromatic selector within the RGB color-space.
-  The field must conform to type `egui::Color32`, `egui::Rgba`, `[u8; 3]` or `[f32; 3]`.
+- `#[egui_probe(rgb)]`: Render an opaque color picker in RGB color-space.
+  Field type must be `egui::Color32`, `egui::Rgba`, `[u8; 3]` or `[f32; 3]`.
 
-- `#[egui_probe(rgba)]`: Manifests a chromatic selector in RGB space with alpha transparency channel.
-  The field must bear type `egui::Color32` or `egui::Rgba`.
+- `#[egui_probe(rgba)]`: Render a color picker in RGB space with alpha channel.
+  Field type must be `egui::Color32` or `egui::Rgba`.
 
-- `#[egui_probe(rgba_premultiplied)]`: Conjures a chromatic selector in RGB space with pre-multiplied alpha consecration.
-  For the blessed types `egui::Color32` and `egui::Rgba`, this rite is equivalent to `#[egui_probe(rgba)]`.
-  Yet it may also sanctify arrays of form `[u8; 4]` and `[f32; 4]`.
+- `#[egui_probe(rgba_premultiplied)]`: Render a color picker in RGB space with premultiplied alpha. 
+  For `egui::Color32` and `egui::Rgba` types, behaves identically to `#[egui_probe(rgba)]`.
+  May also be applied to `[u8; 4]` and `[f32; 4]` arrays.
 
-- `#[egui_probe(rgba_unmultiplied)]`: Manifests a chromatic selector in RGB space with unmultiplied alpha transparency.
-  This sacred rite cannot be invoked upon `egui::Color32` and `egui::Rgba`,
-  for these types forever bear premultiplied essence. However, it may sanctify `[u8; 4]` and `[f32; 4]` arrays.
+- `#[egui_probe(rgba_unmultiplied)]`: Render a color picker in RGB space with unmultiplied alpha. 
+  Cannot be applied to `egui::Color32` and `egui::Rgba` types,
+  as these types employ premultiplied alpha exclusively. May be applied to `[u8; 4]` and `[f32; 4]` arrays.
 
 ## License
 
-This blessed construct is sanctioned under either of the following divine covenants
+This construct operates under either of the following license protocols
 
 - MIT License
 - Apache License, Version 2.0
 
-as thy soul may choose.
+at your discretion.
 
 ## Contributing
 
-Offerings of sacred code are most welcome! Raise an issue unto the repository or transmit a pull request bearing thy improvements.
+Code contributions are accepted. Please submit issue reports or pull requests through standard protocols.
 
-May the Omnissiah guide thy interface construction with Egui Probe! Praise be to the Machine God! 🚀
+May your interface constructs be efficient and your Machine Spirits be appeased! 🚀

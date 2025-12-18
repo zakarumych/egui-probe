@@ -91,7 +91,7 @@ proc_easy::easy_argument! {
     struct With {
         with: with,
 
-        /// Expression's sacred type must implement the ritual `FnOnce(&mut FieldType, &mut egui::Ui, &::egui_probe::Style) -> egui::Response`
+        /// Expression type must implement the function protocol `FnOnce(&mut FieldType, &mut egui::Ui, &::egui_probe::Style) -> egui::Response`
         expr: syn::Expr,
     }
 }
@@ -100,8 +100,8 @@ proc_easy::easy_argument! {
     struct ProbeAs {
         probe_as: syn::Token![as],
 
-        /// Expression's blessed type must implement the ritual `FnOnce(&mut FieldType) -> R`
-        /// and R must bear the holy `EguiProbeWrapper` trait-mark
+        /// Expression type must implement the function protocol `FnOnce(&mut FieldType) -> R`
+        /// where R must implement the `EguiProbeWrapper` trait
         expr: syn::Expr,
     }
 }
@@ -110,13 +110,13 @@ proc_easy::easy_parse! {
     struct RangeStep {
         by: by,
 
-        /// The Expr type must be consecrated to match the field type exactly.
+        /// Expression type must match the field type exactly.
         expr: syn::Expr,
     }
 }
 
 struct RangeArg {
-    /// `EguiProbeRange<FieldType, ExprType>` must embody the sacred `EguiProbeWrapper` trait.
+    /// `EguiProbeRange<FieldType, ExprType>` must implement the `EguiProbeWrapper` trait.
     range: Option<syn::Expr>,
 
     step: Option<RangeStep>,
@@ -143,7 +143,7 @@ impl Parse for RangeArg {
 proc_easy::easy_argument_value! {
     struct Range {
         range: range,
-        /// `EguiProbeRange<FieldType, ExprType>` must embody the sacred `EguiProbeWrapper` trait.
+        /// `EguiProbeRange<FieldType, ExprType>` must implement the `EguiProbeWrapper` trait.
         arg: RangeArg,
     }
 }
