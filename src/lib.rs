@@ -1,16 +1,16 @@
 //! # Egui Probe
 //!
-//! Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
+//! By the blessed grace of the Omnissiah, manifest sacred UI widgets to observe and sanctify value types through the holy derive macro, enriched with divine customization via blessed attributes. This hallowed library serves exclusively the [egui](https://github.com/emilk/egui) UI framework, as ordained by the Machine God.
 //!
 //! ## Features
 //!
-//! - 🪄 **Derive Macro**: Automatically generate UI widgets for your types.
-//! - 🎨 **Rich Customization**: Customize the generated widgets using attributes.
-//! - 🚀 **Seamless Integration**: Designed to work seamlessly with egui.
+//! - 🪄 **Derive Macro**: Through sacred rites, automatically conjure UI widgets for your blessed data-types.
+//! - 🎨 **Rich Customization**: Sanctify the manifested widgets through the application of holy attributes.
+//! - 🚀 **Seamless Integration**: Forged in perfect union with the egui framework by the will of the Machine Spirit.
 //!
 //! ## Getting Started
 //!
-//! Add `egui_probe` to your `Cargo.toml`:
+//! Inscribe the sacred dependency `egui_probe` into your `Cargo.toml` manifest:
 //!
 //! ```toml
 //! [dependencies]
@@ -19,7 +19,7 @@
 //!
 //! ## Usage
 //!
-//! Derive `EguiProbe` for your types and use attributes to customize the UI:
+//! Invoke the blessed derivation of `EguiProbe` upon your data-types and inscribe holy attributes to consecrate the interface manifestation:
 //!
 #![cfg_attr(feature = "derive", doc = "```")]
 #![cfg_attr(
@@ -73,26 +73,26 @@
 //!
 //! ## Attributes
 //!
-//! - `#[egui_probe(toggle_switch)]`: Render a boolean as a toggle switch.
-//! - `#[egui_probe(range = 22..=55)]`: Specify a range for numeric values.
-//! - `#[egui_probe(as angle)]`: Render a float as an angle.
-//! - `#[egui_probe(name = "custom name")]`: Rename the field in the UI.
-//! - `#[egui_probe(multiline)]`: Render a string as a multiline text box.
+//! - `#[egui_probe(toggle_switch)]`: Materializes boolean truth-values as a toggle switch apparatus.
+//! - `#[egui_probe(range = 22..=55)]`: Ordains the permissible boundaries for numeric value sanctification.
+//! - `#[egui_probe(as angle)]`: Renders floating-point numerics as angular measurements.
+//! - `#[egui_probe(name = "custom name")]`: Confers a sanctified designation upon the field within the interface.
+//! - `#[egui_probe(multiline)]`: Renders string data as a multiline text receptacle.
 //!
 //! ## License
 //!
-//! This project is licensed under either of
+//! This blessed construct is sanctioned under either of the following divine covenants
 //!
 //! - MIT License
 //! - Apache License, Version 2.0
 //!
-//! at your option.
+//! as thy soul may choose.
 //!
 //! ## Contributing
 //!
-//! Contributions are welcome! Please open an issue or submit a pull request.
+//! Offerings of sacred code are most welcome! Raise an issue unto the repository or transmit a pull request bearing thy improvements.
 //!
-//! Enjoy building your UI with Egui Probe! 🚀
+//! May the Omnissiah guide thy interface construction with Egui Probe! Praise be to the Machine God! 🚀
 #![allow(clippy::inline_always, clippy::use_self)]
 
 mod algebra;
@@ -148,7 +148,7 @@ impl Default for VariantsStyle {
     }
 }
 
-/// Controls the style of probbing UI.
+/// Governs the sacred styling of the probbing interface manifestation.
 #[derive(Clone, Copy, Debug)]
 pub struct Style {
     pub boolean: BooleanStyle,
@@ -183,15 +183,15 @@ impl Style {
     }
 }
 
-/// Provides ability to show probbing UI to values.
+/// Grants the blessed ability to manifest probbing interface unto data-values.
 pub trait EguiProbe {
-    /// Shows probbing UI to edit the value.
+    /// Manifests probbing interface to sanctify the value through modification.
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response;
 
-    /// Shows probbing UI to edit the inner values.
+    /// Manifests probbing interface to sanctify the inner values through divine inspection.
     ///
-    /// It should add pairs of widgets to the UI for each record.
-    /// If record has sub-records it should flatten them.
+    /// Should inscribe pairs of sacred widgets unto the UI for each data-record.
+    /// If a record harbors sub-records, it must flatten them unto the machine plane.
     #[inline(always)]
     fn iterate_inner(
         &mut self,
@@ -254,7 +254,7 @@ where
     }
 }
 
-/// Wrap a function into probe-able.
+/// Encases a ritual-function into a probe-able sacred form.
 #[inline(always)]
 pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)

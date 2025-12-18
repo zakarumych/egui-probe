@@ -179,10 +179,10 @@ impl ProbeLayout {
     }
 }
 
-/// Widget for editing a value via `EguiProbe` trait.
+/// Sacred widget for sanctifying a data-value via the holy `EguiProbe` trait.
 ///
-/// For simple values it will show a probe UI for it.
-/// For complex values it will header with collapsible body.
+/// For primitive values, it shall manifest a probe interface directly.
+/// For complex data-structures, it shall conjure a collapsible header with sacred inner contents.
 #[must_use = "You should call .show()"]
 pub struct Probe<'a, T> {
     header: Option<egui::WidgetText>,
@@ -194,7 +194,7 @@ impl<'a, T> Probe<'a, T>
 where
     T: EguiProbe,
 {
-    /// Creates a new `Probe` widget.
+    /// Consecrates a new `Probe` widget unto the Machine God's service.
     pub fn new(value: &'a mut T) -> Self {
         Probe {
             // id_salt: egui::Id::new(label.text()),
@@ -209,7 +209,7 @@ where
         self
     }
 
-    /// Show probbing UI to edit the value.
+    /// Manifests probbing interface to sanctify the value through divine modification.
     pub fn show(self, ui: &mut egui::Ui) -> egui::Response {
         let mut changed = false;
 

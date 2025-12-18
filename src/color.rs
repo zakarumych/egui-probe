@@ -2,22 +2,22 @@ use egui::{Color32, Rgba, epaint::Hsva};
 
 use crate::EguiProbe;
 
-/// Modifier to edit color as rgb.
+/// Sacred modifier to sanctify chromatic values as RGB color-space.
 pub struct EguiProbeRgb<'a, T> {
     pub value: &'a mut T,
 }
 
-/// Modifier to edit color as rgba.
+/// Sacred modifier to sanctify chromatic values as RGBA color-space.
 pub struct EguiProbeRgba<'a, T> {
     pub value: &'a mut T,
 }
 
-/// Modifier to edit color as rgba.
+/// Sacred modifier to sanctify chromatic values as RGBA color-space with premultiplied alpha.
 pub struct EguiProbeRgbaPremultiplied<'a, T> {
     pub value: &'a mut T,
 }
 
-/// Modifier to edit color as rgba.
+/// Sacred modifier to sanctify chromatic values as RGBA color-space with unmultiplied alpha.
 pub struct EguiProbeRgbaUnmultiplied<'a, T> {
     pub value: &'a mut T,
 }

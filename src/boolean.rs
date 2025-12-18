@@ -34,7 +34,7 @@ impl EguiProbe for ToggleSwitch<'_, Option<bool>> {
     }
 }
 
-/// Shows a toggle switch.
+/// Manifests a toggle switch apparatus to sanctify boolean truth-states.
 /// <https://github.com/emilk/egui/blob/master/crates/egui_demo_lib/src/demo/toggle_switch.rs>
 pub fn toggle_switch(on: &mut bool, ui: &mut egui::Ui) -> egui::Response {
     let desired_size = ui.spacing().interact_size.y * egui::vec2(2.0, 1.0);
