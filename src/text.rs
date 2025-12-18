@@ -78,7 +78,7 @@ impl EguiProbe for char {
     }
 }
 
-/// Wrapper construct for string types to render multiline text fields.
+/// Wrapper for string-like types to show multiline text field.
 pub struct EguiProbeMultiline<'a, T> {
     pub string: &'a mut T,
 }

@@ -1,16 +1,16 @@
 //! # Egui Probe
 //!
-//! By the Machine Spirit's will, manifest interface widgets to observe and modify data-constructs through the derive macro protocol, enhanced with advanced customization through attribute bindings. This cogitator library serves the [egui](https://github.com/emilk/egui) UI framework exclusively.
+//! Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
 //!
 //! ## Features
 //!
-//! - 🪄 **Derive Macro**: Through automated protocols, generate interface widgets for your data-types.
-//! - 🎨 **Rich Customization**: Configure the generated widgets via attribute markers.
-//! - 🚀 **Seamless Integration**: Engineered for optimal interfacing with the egui framework.
+//! - 🪄 **Derive Macro**: Automatically generate UI widgets for your types.
+//! - 🎨 **Rich Customization**: Customize the generated widgets using attributes.
+//! - 🚀 **Seamless Integration**: Designed to work seamlessly with egui.
 //!
 //! ## Getting Started
 //!
-//! Register the `egui_probe` dependency in your `Cargo.toml` manifest:
+//! Add `egui_probe` to your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
@@ -19,7 +19,7 @@
 //!
 //! ## Usage
 //!
-//! Apply the `EguiProbe` derivation protocol to your data-types and utilize attribute markers to configure the interface:
+//! Derive `EguiProbe` for your types and use attributes to customize the UI:
 //!
 #![cfg_attr(feature = "derive", doc = "```")]
 #![cfg_attr(
@@ -73,26 +73,26 @@
 //!
 //! ## Attributes
 //!
-//! - `#[egui_probe(toggle_switch)]`: Render boolean values as a toggle switch mechanism.
-//! - `#[egui_probe(range = 22..=55)]`: Define bounds for numeric value manipulation.
-//! - `#[egui_probe(as angle)]`: Render floating-point values as angular measurements.
-//! - `#[egui_probe(name = "custom name")]`: Override the field designation in the interface.
-//! - `#[egui_probe(multiline)]`: Render string data as a multiline text input.
+//! - `#[egui_probe(toggle_switch)]`: Render a boolean as a toggle switch.
+//! - `#[egui_probe(range = 22..=55)]`: Specify a range for numeric values.
+//! - `#[egui_probe(as angle)]`: Render a float as an angle.
+//! - `#[egui_probe(name = "custom name")]`: Rename the field in the UI.
+//! - `#[egui_probe(multiline)]`: Render a string as a multiline text box.
 //!
 //! ## License
 //!
-//! This construct operates under either of the following license protocols
+//! This project is licensed under either of
 //!
 //! - MIT License
 //! - Apache License, Version 2.0
 //!
-//! at your discretion.
+//! at your option.
 //!
 //! ## Contributing
 //!
-//! Code contributions are accepted. Please submit issue reports or pull requests through standard protocols.
+//! Contributions are welcome! Please open an issue or submit a pull request.
 //!
-//! May your interface constructs be efficient and your Machine Spirits be appeased! 🚀
+//! Enjoy building your UI with Egui Probe! 🚀
 #![allow(clippy::inline_always, clippy::use_self)]
 
 mod algebra;
@@ -148,7 +148,7 @@ impl Default for VariantsStyle {
     }
 }
 
-/// Governs the styling protocols for the probbing interface.
+/// Controls the style of probbing UI.
 #[derive(Clone, Copy, Debug)]
 pub struct Style {
     pub boolean: BooleanStyle,
@@ -183,15 +183,15 @@ impl Style {
     }
 }
 
-/// Enables the manifestation of probbing interfaces for data-values.
+/// Provides ability to show probbing UI to values.
 pub trait EguiProbe {
-    /// Manifests the probbing interface for value modification.
+    /// Shows probbing UI to edit the value.
     fn probe(&mut self, ui: &mut egui::Ui, style: &Style) -> egui::Response;
 
-    /// Manifests the probbing interface for inner value modification.
+    /// Shows probbing UI to edit the inner values.
     ///
-    /// Should append widget pairs to the UI for each data-record.
-    /// If a record contains sub-records, these should be flattened.
+    /// It should add pairs of widgets to the UI for each record.
+    /// If record has sub-records it should flatten them.
     #[inline(always)]
     fn iterate_inner(
         &mut self,
@@ -254,7 +254,7 @@ where
     }
 }
 
-/// Wraps a function into a probe-able construct.
+/// Wrap a function into probe-able.
 #[inline(always)]
 pub const fn probe_fn<F>(f: F) -> EguiProbeFn<F> {
     EguiProbeFn(f)

@@ -1,6 +1,6 @@
 use crate::{EguiProbe, Style};
 
-/// Modifier construct to append deletion controls to an item's probe interface.
+/// Modifier to add a delete button to an item probe UI.
 pub struct DeleteMe<'a, T> {
     pub value: &'a mut T,
     pub delete: bool,
@@ -37,7 +37,7 @@ where
     }
 }
 
-/// Modifier construct to disable element addition/removal in collection interfaces.
+/// Modifier to disable adding/removing items from collections.
 pub struct EguiProbeFrozen<'a, T> {
     pub value: &'a mut T,
 }

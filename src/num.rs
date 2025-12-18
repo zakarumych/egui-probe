@@ -4,10 +4,10 @@ use egui::emath::Numeric;
 
 use crate::{EguiProbe, Style, option::option_probe_with};
 
-/// Marker type indicating that the range step parameter is unspecified.
+/// Marker type to indicate that the step for range is not set.
 pub struct StepUnset;
 
-/// Combines a value with range bounds to render a probbing interface with constrained modification within those bounds.
+/// Bundles value and a range to show probbing UI to edit the value in that range.
 pub struct EguiProbeRange<'a, T, R, S = StepUnset> {
     pub value: &'a mut T,
     pub range: R,

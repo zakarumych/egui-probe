@@ -4,17 +4,17 @@
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/egui-probe?style=for-the-badge)](https://crates.io/crates/egui-probe)
 [![Discord](https://img.shields.io/discord/1270330377847832646?style=for-the-badge&logo=discord)](https://discord.com/channels/1270330377847832646/1319419862719922289)
 
-By the Machine Spirit's will, manifest interface widgets to observe and modify data-constructs through the derive macro protocol, enhanced with advanced customization through attribute bindings. This cogitator library serves the [egui](https://github.com/emilk/egui) UI framework exclusively.
+Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
 
 ## Features
 
-- 🪄 **Derive Macro**: Through automated protocols, generate interface widgets for your data-types.
-- 🎨 **Rich Customization**: Configure the generated widgets via attribute markers.
-- 🚀 **Seamless Integration**: Engineered for optimal interfacing with the egui framework.
+- 🪄 **Derive Macro**: Automatically generate UI widgets for your types.
+- 🎨 **Rich Customization**: Customize the generated widgets using attributes.
+- 🚀 **Seamless Integration**: Designed to work seamlessly with egui.
 
 ## Getting Started
 
-Register the `egui_probe` dependency in your `Cargo.toml` manifest:
+Add `egui_probe` to your `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -23,8 +23,8 @@ egui_probe = "0.5.2"
 
 ## Usage
 
-Apply the `EguiProbe` derivation protocol to your data-types.
-Utilize attribute markers to configure the interface:
+Derive `EguiProbe` for your types.
+Use attributes to customize the UI:
 
 ### Simple Example
 
@@ -37,7 +37,7 @@ struct SimpleValue {
 }
 ```
 
-The resulting interface manifestation:
+And this is what you get:
 
 ![Simple](./images/simple.png)
 
@@ -148,7 +148,7 @@ struct DemoValue {
 }
 ```
 
-The resulting interface construct:
+And this is what you get:
 
 ![Demo](./images/demo.png)
 
@@ -156,8 +156,8 @@ The resulting interface construct:
 
 ### Type Attributes
 
-- `#[egui_probe(rename_all = kebab-case)]`: Transcode all field designations into the specified case format.
-  Supported case protocols:
+- `#[egui_probe(rename_all = kebab-case)]`: Changes default name of all fields into specified case.
+  Available cases are:
     - `snake_case`
     - `camelCase`
     - `kebab-case`
@@ -165,73 +165,73 @@ The resulting interface construct:
     - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE`
     - `Train-Case`
 
-- `#[egui_probe(where TypeA: TraitB)]`: Appends constraint clauses to the `EguiProbe` implementation.
-  Predicates follow standard Rust syntax protocols.
+- `#[egui_probe(where TypeA: TraitB)]`: Adds where clause to the `EguiProbe` implementation.
+  Predicates follow Rust syntax.
 
-- `#[egui_probe(transparent)]`: Renders the complete type as its singular inner field.
-  Compilation will abort if the type lacks exactly one non-skipped field.
+- `#[egui_probe(transparent)]`: Renders entire type as its only field.
+  Won't compile if the type doesn't have exactly one non-skipped field.
 
-- `#[egui_probe(tags kind)]`: Determines the rendering mechanism for enum variants.
-  When `combobox` is specified, a combobox selector is employed.
-  When `inlined` is specified, variants render inline via radio button controls.
+- `#[egui_probe(tags kind)]`: Controls how enum variants are rendered.
+  If kind is `combobox`, a combobox is used to select the variant.
+  If kind is `inlined`, the variant is rendered inline using radio buttons.
 
 ### Variant Attributes
 
-- `#[egui_probe(name = "custom name")]`: Override the variant designation in the interface.
-- `#[egui_probe(transparent)]`: Renders the variant as its singular inner field.
-  Compilation will abort if the variant lacks exactly one non-skipped field.
+- `#[egui_probe(name = "custom name")]`: Rename the variant in the UI.
+- `#[egui_probe(transparent)]`: Renders the variant as its only field.
+  Won't compile if the variant doesn't have exactly one non-skipped field.
 
 ### Field Attributes
 
-- `#[egui_probe(skip)]`: Exclude the field from interface rendering.
-  This attribute cannot be combined with other attributes.
+- `#[egui_probe(skip)]`: Skip the field in the UI.
+  No other attributes should be used with this attribute.
 
-- `#[egui_probe(name = "custom name")]`: Override the field designation in the interface.
+- `#[egui_probe(name = "custom name")]`: Rename the field in the UI.
 
-- `#[egui_probe(with probe_fn)]`: Render the field via a specified probe function
+- `#[egui_probe(with probe_fn)]`: Render a filed using specified probe function
   with signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`.
-  Note that `probe_fn` may be any expression, enabling closure usage.
+  Node that `probe_fn` can be an expression, so closure can be used.
 
-- `#[egui_probe(as probe_fn)]`: Render the field via a specified probe function
+- `#[egui_probe(as probe_fn)]`: Render a filed using specified probe function
   with signature `fn(&mut FieldType) -> impl EguiProbe`.
-  This wraps the field in a type implementing the `EguiProbe` trait.
+  i.e. wrapping the field into type that implements `EguiProbe`.
 
-- `#[egui_probe(range = 22..=55)]`: Define bounds for numeric value manipulation.
-  Compatible with optional types.
+- `#[egui_probe(range = 22..=55)]`: Specify a range for numeric values.
+  Works on optionals too.
 
-- `#[egui_probe(multiline)]`: Render string data as a multiline text input.
-  Field type must be `String` or `&str`, or an optional variant thereof.
+- `#[egui_probe(multiline)]`: Render a string as a multiline text box.
+  Field must be of type `String` or `&str`. Or an option of those.
 
-- `#[egui_probe(toggle_switch)]`: Render boolean values as a toggle switch mechanism.
-  Field type must be `bool` or an optional variant thereof.
+- `#[egui_probe(toggle_switch)]`: Render a boolean as a toggle switch.
+  Field must be of type `bool` or an optional of `bool`.
 
-- `#[egui_probe(frozen)]`: Renders collections with element modification controls disabled.
+- `#[egui_probe(frozen)]`: Renders a collection without controls to add or remove elements.
 
-- `#[egui_probe(rgb)]`: Render an opaque color picker in RGB color-space.
-  Field type must be `egui::Color32`, `egui::Rgba`, `[u8; 3]` or `[f32; 3]`.
+- `#[egui_probe(rgb)]`: Render opaque color picker in RGB space.
+  Field must be of type `egui::Color32`, `egui::Rgba`, `[u8; 3]` or `[f32; 3]`.
 
-- `#[egui_probe(rgba)]`: Render a color picker in RGB space with alpha channel.
-  Field type must be `egui::Color32` or `egui::Rgba`.
+- `#[egui_probe(rgba)]`: Render color picker in RGB space with alpha.
+  Field must be of type `egui::Color32`, `egui::Rgba`.
 
-- `#[egui_probe(rgba_premultiplied)]`: Render a color picker in RGB space with premultiplied alpha. 
-  For `egui::Color32` and `egui::Rgba` types, behaves identically to `#[egui_probe(rgba)]`.
-  May also be applied to `[u8; 4]` and `[f32; 4]` arrays.
+- `#[egui_probe(rgba_premultiplied)]`: Render color picker in RGB space with premultiplied alpha. 
+  For `egui::Color32` and `egui::Rgba` it is the same as `#[egui_probe(rgba)]`.
+  But it can be used on `[u8; 4]` and `[f32; 4]`.
 
-- `#[egui_probe(rgba_unmultiplied)]`: Render a color picker in RGB space with unmultiplied alpha. 
-  Cannot be applied to `egui::Color32` and `egui::Rgba` types,
-  as these types employ premultiplied alpha exclusively. May be applied to `[u8; 4]` and `[f32; 4]` arrays.
+- `#[egui_probe(rgba_unmultiplied)]`: Render color picker in RGB space with unmultiplied alpha. 
+  It can't be used with `egui::Color32` and `egui::Rgba`,
+  as those are always premultiplied. But it can be used on `[u8; 4]` and `[f32; 4]`.
 
 ## License
 
-This construct operates under either of the following license protocols
+This project is licensed under either of
 
 - MIT License
 - Apache License, Version 2.0
 
-at your discretion.
+at your option.
 
 ## Contributing
 
-Code contributions are accepted. Please submit issue reports or pull requests through standard protocols.
+Contributions are welcome! Please open an issue or submit a pull request.
 
-May your interface constructs be efficient and your Machine Spirits be appeased! 🚀
+Enjoy building your UI with Egui Probe! 🚀
