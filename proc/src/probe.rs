@@ -481,7 +481,7 @@ fn variant_inline_probe(variant: &syn::Variant) -> syn::Result<proc_macro2::Toke
 
     let ident = &variant.ident;
 
-    if attributes.transparent.is_some() {
+    if let Some(transparent) = attributes.transparent {
         let pattern = match variant.fields {
             syn::Fields::Unit => quote::quote!(Self::#ident),
             syn::Fields::Unnamed(ref fields) => {
@@ -511,7 +511,7 @@ fn variant_inline_probe(variant: &syn::Variant) -> syn::Result<proc_macro2::Toke
 
         if all_fields_probe.len() != 1 {
             return Err(syn::Error::new_spanned(
-                attributes.transparent.unwrap(),
+                transparent,
                 "Transparent variant must have exactly one non-skipped field",
             ));
         }
@@ -565,7 +565,7 @@ fn variant_iterate_inner(
         }
     };
 
-    if attributes.transparent.is_some() {
+    if let Some(transparent) = attributes.transparent {
         let all_fields_probe: Vec<_> = variant
             .fields
             .iter()
@@ -575,7 +575,7 @@ fn variant_iterate_inner(
 
         if all_fields_probe.len() != 1 {
             return Err(syn::Error::new_spanned(
-                attributes.transparent.unwrap(),
+                transparent,
                 "Transparent variant must have exactly one non-skipped field",
             ));
         }
@@ -637,9 +637,9 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
 
     match input.data {
         syn::Data::Struct(data) => {
-            if attributes.tags.is_some() {
+            if let Some(tags) = attributes.tags {
                 return Err(syn::Error::new_spanned(
-                    attributes.tags.unwrap().tags,
+                    tags.tags,
                     "Tags may be specified only for enums",
                 ));
             }
@@ -671,10 +671,10 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
                 .filter_map(|(idx, field)| field_probe(idx, field).transpose())
                 .collect::<syn::Result<_>>()?;
 
-            if attributes.transparent.is_some() {
+            if let Some(transparent) = attributes.transparent {
                 if all_fields_probe.len() != 1 {
                     return Err(syn::Error::new_spanned(
-                        attributes.transparent.unwrap(),
+                        transparent,
                         "Transparent struct must have exactly one non-skipped field",
                     ));
                 }
@@ -734,9 +734,9 @@ pub fn derive(input: syn::DeriveInput) -> syn::Result<proc_macro2::TokenStream> 
         }
 
         syn::Data::Enum(data) => {
-            if attributes.transparent.is_some() {
+            if let Some(transparent) = attributes.transparent {
                 return Err(syn::Error::new_spanned(
-                    attributes.transparent.unwrap(),
+                    transparent,
                     "Transparent may be specified only for structs or enum variants with exactly one non-skipped field",
                 ));
             }
