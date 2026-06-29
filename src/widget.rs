@@ -1,6 +1,4 @@
-use core::hash::Hash;
-
-use egui::WidgetText;
+use egui::{AsIdSalt, WidgetText};
 
 use crate::{EguiProbe, Style};
 
@@ -123,7 +121,7 @@ impl ProbeLayout {
     pub fn inner_label_ui(
         &mut self,
         indent: usize,
-        id_salt: impl Hash,
+        id_salt: impl AsIdSalt,
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui) -> egui::Response,
     ) -> egui::Response {
@@ -162,7 +160,7 @@ impl ProbeLayout {
 
     pub fn inner_value_ui(
         &mut self,
-        id_salt: impl Hash,
+        id_salt: impl AsIdSalt,
         ui: &mut egui::Ui,
         add_content: impl FnOnce(&mut egui::Ui),
     ) {
@@ -299,7 +297,7 @@ fn show_header(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_salt: impl Hash,
+    id_salt: impl AsIdSalt,
     changed: &mut bool,
 ) -> ProbeHeader {
     let id = ui.make_persistent_id(id_salt);
@@ -333,7 +331,7 @@ fn show_table(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_salt: impl Hash,
+    id_salt: impl AsIdSalt,
     changed: &mut bool,
 ) {
     let cursor = ui.cursor();
@@ -411,7 +409,7 @@ fn show_table_direct(
     indent: usize,
     ui: &mut egui::Ui,
     style: &Style,
-    id_salt: impl Hash,
+    id_salt: impl AsIdSalt,
     changed: &mut bool,
 ) {
     let cursor = ui.cursor();

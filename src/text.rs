@@ -45,8 +45,8 @@ impl egui::text_edit::TextBuffer for CharBuffer {
         unsafe { std::str::from_utf8_unchecked(&self.buf[..self.ch.len_utf8()]) }
     }
 
-    fn insert_text(&mut self, text: &str, char_index: usize) -> usize {
-        if char_index > 1 {
+    fn insert_text(&mut self, text: &str, char_index: egui::text::CharIndex) -> usize {
+        if char_index.0 > 1 {
             return 0;
         }
         match text.chars().next() {
@@ -59,7 +59,7 @@ impl egui::text_edit::TextBuffer for CharBuffer {
         }
     }
 
-    fn delete_char_range(&mut self, _char_range: Range<usize>) {}
+    fn delete_char_range(&mut self, _char_range: Range<egui::text::CharIndex>) {}
 
     fn type_id(&self) -> TypeId {
         TypeId::of::<Self>()
