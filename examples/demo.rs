@@ -172,12 +172,12 @@ impl EguiProbeDemoApp {
 }
 
 impl eframe::App for EguiProbeDemoApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::TopBottomPanel::top("header").show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::Panel::top("header").show(ui, |ui| {
             egui::widgets::global_theme_preference_switch(ui);
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 Probe::new(&mut self.value).show(ui);
             });

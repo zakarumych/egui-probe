@@ -74,14 +74,14 @@ impl EguiProbeEdictApp {
 }
 
 impl eframe::App for EguiProbeEdictApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let Self { world, selected } = self;
 
-        egui::TopBottomPanel::top("header").show(ctx, |ui| {
+        egui::Panel::top("header").show(ui, |ui| {
             egui::widgets::global_theme_preference_switch(ui);
         });
 
-        egui::SidePanel::left("entities").show(ctx, |ui| {
+        egui::Panel::left("entities").show(ui, |ui| {
             ui.vertical(|ui| {
                 if ui.small_button("+").clicked() {
                     world.spawn_empty();
@@ -115,7 +115,7 @@ impl eframe::App for EguiProbeEdictApp {
             })
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             let mut entities = world
                 .view::<Entities>()
                 .iter()
