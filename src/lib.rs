@@ -105,6 +105,7 @@ mod hashbrown;
 mod map;
 mod num;
 mod option;
+mod rwlock;
 mod set;
 #[cfg(any(feature = "smallvec1", feature = "smallvec2"))]
 mod small_vec;
@@ -114,6 +115,7 @@ mod vec;
 mod widget;
 
 pub use egui;
+pub use rwlock::ListOptions;
 
 pub use self::{
     boolean::toggle_switch,
