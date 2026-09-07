@@ -4,29 +4,32 @@
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/egui-probe?style=for-the-badge)](https://crates.io/crates/egui-probe)
 [![Discord](https://img.shields.io/discord/1270330377847832646?style=for-the-badge&logo=discord)](https://discord.com/channels/1270330377847832646/1319419862719922289)
 
-Effortlessly create UI widgets to display and modify value types using a derive macro with rich customization via attributes. This library is exclusively for the [egui](https://github.com/emilk/egui) UI framework.
+*I have gazed into the abyss of nested data structures, and the abyss has rendered itself back unto me...*
 
-## Features
+Through arcane incantations of derive macros, one may summon forth UI widgets that peer into the very essence of value types, transmuting their hidden forms with attributes of unspeakable power. This grimoire binds exclusively to the ancient [egui](https://github.com/emilk/egui) UI framework - a covenant not to be broken.
 
-- 🪄 **Derive Macro**: Automatically generate UI widgets for your types.
-- 🎨 **Rich Customization**: Customize the generated widgets using attributes.
-- 🚀 **Seamless Integration**: Designed to work seamlessly with egui.
+## The Revelations
 
-## Getting Started
+- 🌑 **The Summoning Ritual**: Through profane derive macros, UI widgets manifest from the void, binding themselves to your types without mercy.
+- 👁️ **Whispered Configurations**: Shape the eldritch forms with attributes that twist reality itself, bending widgets to your unknowable will.
+- 🕸️ **The Unbreakable Binding**: Forged in darkness to merge seamlessly with egui, as if they were always meant to be one.
 
-Add `egui_probe` to your `Cargo.toml`:
+## The First Incantation
+
+To begin your descent into this realm, inscribe the following into your `Cargo.toml`. Once written, there is no turning back:
 
 ```toml
 [dependencies]
-egui_probe = "0.5.2"
+egui_probe = "0.10.0"
 ```
 
-## Usage
+## Awakening the Power
 
-Derive `EguiProbe` for your types.
-Use attributes to customize the UI:
+Invoke `EguiProbe` upon your types - they shall never be the same. The attributes... they *change* things. They must be used carefully, lest the results twist beyond recognition:
 
-### Simple Example
+### A Simple Glimpse
+
+Behold - a structure so innocent, so pure. Yet with a single derive, it becomes... *observable*:
 
 ```rust
 #[derive(EguiProbe)]
@@ -37,11 +40,13 @@ struct SimpleValue {
 }
 ```
 
-And this is what you get:
+The manifestation - gaze upon what has been wrought:
 
 ![Simple](./images/simple.png)
 
-### Advanced Example
+### The Deeper Truths
+
+But there are those who dare venture further, who inscribe more complex patterns. I have witnessed what transpires when one does...
 
 ```rust
 struct Foo;
@@ -148,90 +153,78 @@ struct DemoValue {
 }
 ```
 
-And this is what you get:
+The result... I dare not look at it for too long. The widgets writhe with purpose:
 
 ![Demo](./images/demo.png)
 
-## Attributes
+## The Forbidden Markings
 
-### Type Attributes
+*These are the symbols of power. Each one transforms, each one binds. Use them with reverence, for they reach beyond the veil...*
 
-- `#[egui_probe(rename_all = kebab-case)]`: Changes default name of all fields into specified case.
-  Available cases are:
-    - `snake_case`
-    - `camelCase`
-    - `kebab-case`
-    - `PascalCase`
-    - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE`
-    - `Train-Case`
+### Inscriptions Upon the Type Itself
 
-- `#[egui_probe(where TypeA: TraitB)]`: Adds where clause to the `EguiProbe` implementation.
-  Predicates follow Rust syntax.
+- `#[egui_probe(rename_all = kebab-case)]`: Warps the true names of all fields, reshaping them according to ancient naming conventions. The available incantations:
+    - `snake_case` - the serpent's whisper
+    - `camelCase` - the twin-humped beast
+    - `kebab-case` - the skewered words
+    - `PascalCase` - the scholar's cipher
+    - `SCREAMING_SNAKE_CASE` or `UPPER_SNAKE_CASE` - the banshee's wail
+    - `Train-Case` - the chained rhythm
 
-- `#[egui_probe(transparent)]`: Renders entire type as its only field.
-  Won't compile if the type doesn't have exactly one non-skipped field.
+- `#[egui_probe(where TypeA: TraitB)]`: Binds constraints upon the implementation, forging predicates that follow the syntax known to Rust. A contract written in compile-time blood.
 
-- `#[egui_probe(tags kind)]`: Controls how enum variants are rendered.
-  If kind is `combobox`, a combobox is used to select the variant.
-  If kind is `inlined`, the variant is rendered inline using radio buttons.
+- `#[egui_probe(transparent)]`: The type becomes one with its singular field - no boundaries, no separation. It will not compile if there exists more than one non-skipped field, for such unity cannot be divided.
 
-### Variant Attributes
+- `#[egui_probe(tags kind)]`: Commands how the myriad variants of enums shall manifest themselves before mortal eyes.
+  When `kind` is `combobox`, a dropdown reveals the choices in orderly fashion.
+  When `kind` is `inlined`, radio buttons spread across the interface like stars in a cursed constellation.
 
-- `#[egui_probe(name = "custom name")]`: Rename the variant in the UI.
-- `#[egui_probe(transparent)]`: Renders the variant as its only field.
-  Won't compile if the variant doesn't have exactly one non-skipped field.
+### Marks Upon the Variant
 
-### Field Attributes
+- `#[egui_probe(name = "custom name")]`: Bestows a new name upon the variant, concealing its original identity from those who observe the interface.
+- `#[egui_probe(transparent)]`: The variant dissolves into its singular field, becoming imperceptible as a separate entity. Compilation fails if the variant harbors more than one non-skipped field - such transparency demands singularity.
 
-- `#[egui_probe(skip)]`: Skip the field in the UI.
-  No other attributes should be used with this attribute.
+### Sigils Upon the Field
 
-- `#[egui_probe(name = "custom name")]`: Rename the field in the UI.
+- `#[egui_probe(skip)]`: The field vanishes from the UI realm entirely, as if it never existed. No other attributes dare accompany this mark of erasure.
 
-- `#[egui_probe(with probe_fn)]`: Render a filed using specified probe function
-  with signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`.
-  Node that `probe_fn` can be an expression, so closure can be used.
+- `#[egui_probe(name = "custom name")]`: Grants the field a false name, a mask worn in the interface's presence.
 
-- `#[egui_probe(as probe_fn)]`: Render a filed using specified probe function
-  with signature `fn(&mut FieldType) -> impl EguiProbe`.
-  i.e. wrapping the field into type that implements `EguiProbe`.
+- `#[egui_probe(with probe_fn)]`: Commands the field to render through a specified probe function - one bearing the signature `fn(&mut FieldType, &mut Ui, &egui_probe::Style) -> egui::Response`. Know that `probe_fn` may be an expression; closures lurk within this possibility.
 
-- `#[egui_probe(range = 22..=55)]`: Specify a range for numeric values.
-  Works on optionals too.
+- `#[egui_probe(as probe_fn)]`: Wraps the field in another form through a function of signature `fn(&mut FieldType) -> impl EguiProbe`. The field becomes something... else.
 
-- `#[egui_probe(multiline)]`: Render a string as a multiline text box.
-  Field must be of type `String` or `&str`. Or an option of those.
+- `#[egui_probe(range = 22..=55)]`: Constrains numeric values within invisible walls. Even optionals bow to these boundaries.
 
-- `#[egui_probe(toggle_switch)]`: Render a boolean as a toggle switch.
-  Field must be of type `bool` or an optional of `bool`.
+- `#[egui_probe(multiline)]`: Unfolds a string across multiple lines, revealing its full text in a sprawling box. The field must be `String` or `&str`, or an option containing such whispers.
 
-- `#[egui_probe(frozen)]`: Renders a collection without controls to add or remove elements.
+- `#[egui_probe(toggle_switch)]`: A boolean manifests as a switch that toggles between states. The field must be `bool` or perhaps nothing - an optional boolean, existing and not existing.
 
-- `#[egui_probe(rgb)]`: Render opaque color picker in RGB space.
-  Field must be of type `egui::Color32`, `egui::Rgba`, `[u8; 3]` or `[f32; 3]`.
+- `#[egui_probe(frozen)]`: Collections rendered thus become immutable witnesses - displayed but untouchable, their elements neither added nor removed.
 
-- `#[egui_probe(rgba)]`: Render color picker in RGB space with alpha.
-  Field must be of type `egui::Color32`, `egui::Rgba`.
+- `#[egui_probe(rgb)]`: Summons an opaque color picker from RGB space itself. The field must be `egui::Color32`, `egui::Rgba`, `[u8; 3]`, or `[f32; 3]`.
 
-- `#[egui_probe(rgba_premultiplied)]`: Render color picker in RGB space with premultiplied alpha. 
-  For `egui::Color32` and `egui::Rgba` it is the same as `#[egui_probe(rgba)]`.
-  But it can be used on `[u8; 4]` and `[f32; 4]`.
+- `#[egui_probe(rgba)]`: Like `rgb`, but the alpha channel breathes with it - transparency made tangible. For `egui::Color32` and `egui::Rgba` only.
 
-- `#[egui_probe(rgba_unmultiplied)]`: Render color picker in RGB space with unmultiplied alpha. 
-  It can't be used with `egui::Color32` and `egui::Rgba`,
-  as those are always premultiplied. But it can be used on `[u8; 4]` and `[f32; 4]`.
+- `#[egui_probe(rgba_premultiplied)]`: Color with alpha, premultiplied in ways the ancients intended. Works with `egui::Color32`, `egui::Rgba`, `[u8; 4]`, and `[f32; 4]`.
 
-## License
+- `#[egui_probe(rgba_unmultiplied)]`: The alpha remains separate, unmultiplied - a dangerous independence. Cannot be invoked upon `egui::Color32` or `egui::Rgba`, for they exist only premultiplied. But `[u8; 4]` and `[f32; 4]` may bear this mark.
 
-This project is licensed under either of
+## The Covenant
 
-- MIT License
-- Apache License, Version 2.0
+This grimoire exists under dual covenants, sealed in ancient law:
 
-at your option.
+- MIT License - the permissive path
+- Apache License, Version 2.0 - the guarded way
 
-## Contributing
+Choose one. Choose both. The choice, as always, is yours... for now.
 
-Contributions are welcome! Please open an issue or submit a pull request.
+## Those Who Would Contribute
 
-Enjoy building your UI with Egui Probe! 🚀
+Should you desire to add to this tome, to inscribe your own dark knowledge upon its pages, you are... *welcomed*. Open an issue. Submit a pull request. Join us in expanding the boundaries of what can be probed.
+
+*But know this - once you peer into the types, once you witness their inner workings laid bare before you... they peer back.*
+
+May your UI forms never corrupt. May your values always bind. May the runtime never panic in places unknown.
+
+🌘
