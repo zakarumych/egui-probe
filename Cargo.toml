@@ -1,10 +1,10 @@
 
 [workspace.package]
-version = "0.13.0"
+version = "0.14.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/zakarumych/egui-probe"
-rust-version = "1.92"
+rust-version = "1.95"
 
 [package]
 name = "egui-probe"
@@ -20,17 +20,17 @@ rust-version.workspace = true
 derive = ["dep:egui-probe-proc"]
 
 [dependencies]
-egui-probe-proc = { path = "proc", version = "=0.13.0", optional = true }
-egui = { version = "0.36" }
+egui-probe-proc = { path = "proc", version = "=0.14.0", optional = true }
+egui = { version = "0.37" }
 
 smallvec1 = { package = "smallvec", version = "1", features = [
     "const_generics",
 ], optional = true }
-smallvec2 = { package = "smallvec", version = "2.0.0-alpha.12", optional = true }
+smallvec2 = { package = "smallvec", version = "2.0.0-beta.3", optional = true }
 hashbrown = { version = "0.17", optional = true }
 
 [dev-dependencies]
-eframe = "0.36"
+eframe = "0.37"
 edict = "1.0.0-rc8"
 
 [[example]]
